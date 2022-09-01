@@ -2,7 +2,6 @@ Attribute VB_Name = "zRun_R"
 Option Explicit
 '===================================================================
 'Portable module of subs for interfacing with R in VBA
-'Author: Ulchc
 'TODO: Verify working on MacOS
 '===================================================================
 '-------------------------------------------------------------------
