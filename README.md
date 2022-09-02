@@ -240,6 +240,13 @@ zPortable_Subs and zPortable_Functions from github.com/AltraSol/VBA
 
 ```
 ``` VBA
+  Test_QuickRun_RScript()
+
+'   Writes a computationally intensive script to Desktop and asks
+'   if you want to run it (to visually verify all zRun_R f(x) worked)
+
+```
+``` VBA
   WriteTemp_RScript(ByVal ScriptContents As String)
 
 '   Creates a random named temporary folder on desktop, creates an
@@ -288,16 +295,4 @@ zPortable_Subs and zPortable_Functions from github.com/AltraSol/VBA
 '   versions of R on the OS from which the sub is called
 
 ```
-``` VBA
-  Delete_FileAndFolder(ByVal aPath As String)
 
-'   Deletes {aPath} and it's container folder (including all other files)
-
-```
-``` VBA
-  Test_QuickRun_RScript()
-
-'   Writes a computationally intensive script to Desktop and asks
-'   if you want to run it (to visually verify all zRun_R f(x) worked)
-
-```
