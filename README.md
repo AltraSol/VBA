@@ -69,9 +69,9 @@ only dependent on one-another (if at all)
 ```
 ``` VBA
   MoveSlicer(SlicerSelection,
-            rngPaste As Range,
-            leftOffset,
-            IncTop)
+             rngPaste As Range,
+             leftOffset,
+             IncTop)
 
 '   Takes Selection as {SlicerSelection}, cuts & pastes it to a rough
 '   location {rngPaste} to be incrementally adjusted from paste
