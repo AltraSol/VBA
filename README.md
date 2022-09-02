@@ -1,9 +1,9 @@
 # VBA
+Download VBA-All.xlsm for improved readability.
 
 ## zPortable_Functions
-===================================================================
-Portable module of functions which can be exported to any workbook
-===================================================================
+Portable module of functions which can be exported to any workbook.
+
 ```
  Tabs_MatchingCodeName(MatchCodeName As String,
                        ExcludePerfectMatch As Boolean)
