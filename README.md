@@ -91,7 +91,7 @@ and are only dependent on one-another
 
 ``` VBA
   Tabs_MatchingCodeName(MatchCodeName As String,
-                       ExcludePerfectMatch As Boolean)
+                        ExcludePerfectMatch As Boolean)
 
 '   Returns array of tab names with MatchCodeName found in the CodeName
 '   property (useful for detecting copies of a code-named template)
@@ -206,7 +206,7 @@ and are only dependent on one-another
 ```
 ``` VBA
   Clipboard_Read(Optional IfRngConcatAllVals As Boolean = True,
-                Optional Sep As String = ", ")
+                 Optional Sep As String = ", ")
 
 '   Returns text from the copied object (clipboard text or range)
 
@@ -255,8 +255,8 @@ zPortable_Subs and zPortable_Functions from github.com/AltraSol/VBA
 ```
 ``` VBA
   Run_RScript(ByVal RLocation As String, _
-             ByVal ScriptLocation As String, _
-             Optional ByVal Visibility As String)
+              ByVal ScriptLocation As String, _
+              Optional ByVal Visibility As String)
 
 '   Uses the RScript.exe pointed to by {RLocation} to run the script
 '   found at {ScriptLocation}. Rscript.exe window displayed by default,
