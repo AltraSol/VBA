@@ -1,85 +1,86 @@
 Attribute VB_Name = "zPortable_Subs"
 Option Explicit
 '===================================================================
-'Portable module of subs which can be exported to any workbook
-'and are only dependent on one-another
+'## Module: zPortable_Subs.bas
+'Portable module of subs which can be exported to any workbook and are
+'only dependent on one-another (if at all)
 '===================================================================
-'-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
 ' ReDim_Add(ByRef aArr() As Variant, ByVal aVal)
 '
-'   Simplifies the addition of a value to a one dimensional array by
-'   handling the initalization & resizing of an array in VBA
+''    Simplifies the addition of a value to a one dimensional array by
+''    handling the initalization & resizing of an array in VBA
 '
-'   Call ReDim_Add(aArr(), aVal) -> last element of aArr() now aVal
+''    Call ReDim_Add(aArr(), aVal) -> last element of aArr() now aVal
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
 ' MergeAndCombine(MergeRange As Range, _
 '                 Optional SepValsByNewLine = True)
 '
-'   Concatenates each Cell.Value in a range & merges range as opposed
-'   to Merge & Center which only keeps a single value
+''    Concatenates each Cell.Value in a range & merges range as opposed
+''    to Merge & Center which only keeps a single value
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
 ' MenuAdd_MergeAndCombine()
 '
-'   Adds "Merge and Combine" menu option to cell right-click menu
-'   Note: Calls Sub "MergeAndCombine_Selection"
+''    Adds "Merge and Combine" menu option to cell right-click menu
+''    Note: Calls Sub "MergeAndCombine_Selection"
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
 ' MenuDelete_MergeAndCombine()
 '
-'   Deletes "Merge and Combine" menu option
+''    Deletes "Merge and Combine" menu option
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
 ' AutoAdjustZoom(rngBegin, rngEnd)
 '
-'   Adjusts user view to the width of rngBegin to rngEnd
+''   Adjusts user view to the width of rngBegin to rngEnd
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' LaunchLink(aLink)
+'------------------------------------------------------------------- VBA
+' LaunchLink (aLink)
 '
-'   Launches aLink in existing browser with error handling for
-'   invalid links
+''   Launches aLink in existing browser with error handling for
+''   invalid Links
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
 ' InsertSlicer(NamedRange As String,
 '              NumCols As Integer,
 '              aHeight As Double,
 '              aWidth As Double)
 '
-'   Creates a slicer for the active sheet named range {NamedRange}
-'   with {NumCols} buttons per slicer row, and with dimensions
-'   {aHeight} by {aWidth}
+''   Creates a slicer for the active sheet named range {NamedRange}
+''   with {NumCols} buttons per slicer row, and with dimensions
+''   {aHeight} by {aWidth}
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' AlterSlicerColumns(SlicerName As String, NumCols)
+'------------------------------------------------------------------- VBA
+'  AlterSlicerColumns(SlicerName As String, NumCols)
 '
-'   Loops through workbook to find {SlicerName} and sets the number
-'   of buttons per row to {NumCols}
+''   Loops through workbook to find {SlicerName} and sets the number
+''   of buttons per row to {NumCols}
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' MoveSlicer(SlicerSelection,
+'------------------------------------------------------------------- VBA
+'  MoveSlicer(SlicerSelection,
 '            rngPaste As Range,
 '            leftOffset,
 '            IncTop)
 '
-'   Takes Selection as {SlicerSelection}, cuts & pastes it to a rough
-'   location {rngPaste} to be incrementally adjusted from paste
-'   location by {leftOffset} and {IncTop}
+''   Takes Selection as {SlicerSelection}, cuts & pastes it to a rough
+''   location {rngPaste} to be incrementally adjusted from paste
+''   location by {leftOffset} and {IncTop}
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' ToggleDisplayMode()
+'------------------------------------------------------------------- VBA
+'  ToggleDisplayMode()
 '
-'   Toggles display of ribbon, formula bar, status bar & headings
+''   Toggles display of ribbon, formula bar, status bar & headings
 '
 '-------------------------------------------------------------------
 
@@ -142,7 +143,7 @@ On Error Resume Next
 On Error GoTo -1
 
 Dim Menu_MergeAndCombine As Object
-Set Menu_MergeAndCombine = CommandBars("Cell").Controls.Add(Before:=1)
+Set Menu_MergeAndCombine = CommandBars("Cell").Controls.Add(before:=1)
 
     With Menu_MergeAndCombine
        .Caption = "Merge and Combine"

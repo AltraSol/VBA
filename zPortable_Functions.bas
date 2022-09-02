@@ -1,146 +1,146 @@
 Attribute VB_Name = "zPortable_Functions"
 Option Explicit
 '===================================================================
+'## Module: zPortable_Functions.bas
 'Portable module of functions which can be exported to any workbook
 'and are only dependent on one-another
 '===================================================================
-'-------------------------------------------------------------------
-' Tabs_MatchingCodeName(MatchCodeName As String,
-'                       ExcludePerfectMatch As Boolean)
+'------------------------------------------------------------------- VBA
+'  Tabs_MatchingCodeName(MatchCodeName As String,
+'                        ExcludePerfectMatch As Boolean)
 '
-'   Returns array of tab names with MatchCodeName found in the CodeName
-'   property (useful for detecting copies of a code-named template)
-'
-'-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' WorksheetExists (aName)
-'
-'   True or False dependent on if tab name {aName} already exists
+''   Returns array of tab names with MatchCodeName found in the CodeName
+''   property (useful for detecting copies of a code-named template)
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' ExtractFirstInt_RightToLeft (aVariable)
+'------------------------------------------------------------------- VBA
+'  WorksheetExists (aName)
 '
-'   Returns the first integer found in a string when searcing
-'   from the right end of the string to the left
-'
-'   ExtractFirstInt_RightToLeft("Some12Embedded345Num") = "345"
+''   True or False dependent on if tab name {aName} already exists
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' ExtractFirstInt_LeftToRight (aVariable)
+'------------------------------------------------------------------- VBA
+'  ExtractFirstInt_RightToLeft (aVariable)
 '
-'   Returns the first integer found in a string when searcing
-'   from the left end of the string to the right
+''   Returns the first integer found in a string when searcing
+''   from the right end of the string to the left
 '
-'   ExtractFirstInt_LeftToRight("Some12Embedded345Num") = "12"
-'
-'-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' Truncate_Before_Int (aString)
-'
-'   Removes characters before first integer in a sequence of characters
-'
-'   Truncate_After_Int("Some12Embedded345Num") = "12Embedded345Num"
+''   ExtractFirstInt_RightToLeft("Some12Embedded345Num") = "345"
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' Truncate_After_Int (aString)
+'------------------------------------------------------------------- VBA
+'  ExtractFirstInt_LeftToRight (aVariable)
 '
-'   Removes characters after first integer in a sequence of characters
+''   Returns the first integer found in a string when searcing
+''   from the left end of the string to the right
 '
-'   Truncate_After_Int("Some12Embedded345Num") = "Some12Embedded345"
-'
-'-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' IsInt_NoTrailingSymbols (aNumeric)
-'
-'   Checks if supplied value is both numeric, and contains no numeric
-'   symbols (different from IsNumeric)
-'
-'   IsInt_NoTrailingSymbols(9999) = True
-'   IsInt_NoTrailingSymbols(9999,) = False
+''   ExtractFirstInt_LeftToRight("Some12Embedded345Num") = "12"
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' MyOS()
+'------------------------------------------------------------------- VBA
+'  Truncate_Before_Int (aString)
 '
-'   Returns "Windows",  "Mac", or "Neither Windows or Mac"
+''   Removes characters before first integer in a sequence of characters
 '
-'-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' Get_WindowsUsername()
-'
-'   Loops through folders to find paths matching C:\Users\...\AppData
-'   then extracts Username from correct path. Superior to reading
-'   .FullName of workbook which does not work for OneDrive files
+''   Truncate_After_Int("Some12Embedded345Num") = "12Embedded345Num"
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' Get_MacUsername()
+'------------------------------------------------------------------- VBA
+'  Truncate_After_Int (aString)
 '
-'   Reads Activeworkbook.FullName property to get Mac user
+''   Removes characters after first integer in a sequence of characters
 '
-'-------------------------------------------------------------------
-'-------------------------------------------------------------------
-'
-' Get_Username()
-'
-'   Returns username regardless of Windows or Mac OS
+''   Truncate_After_Int("Some12Embedded345Num") = "Some12Embedded345"
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' Get_DesktopPath()
+'------------------------------------------------------------------- VBA
+'  IsInt_NoTrailingSymbols (aNumeric)
 '
-'   Returns Mac or Windows desktop directory (even if on OneDrive)
+''   Checks if supplied value is both numeric, and contains no numeric
+''   symbols (different from IsNumeric)
 '
-'-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' Delete_FileAndFolder(ByVal aFilePath As String)
-'
-'   Read code directly prior to use
+''   IsInt_NoTrailingSymbols(9999) = True
+''   IsInt_NoTrailingSymbols(9999,) = False
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' Print_Pad()
+'------------------------------------------------------------------- VBA
+'  MyOS()
 '
-'   Uses Debug.Print to print a timestamped seperator of "======"
-'
-'-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' Print_Named(Something, Optional Label)
-'
-'   Uses Debug.Print to add a space between each {Something} printed,
-'   labels each {Something} if {Label} supplied
+''   Returns "Windows",  "Mac", or "Neither Windows or Mac"
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' Clipboard_Load(ByVal aString As String)
+'------------------------------------------------------------------- VBA
+'  Get_WindowsUsername()
 '
-'   Stores {aString} in clipboard
-'
-'-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' Clipboard_Read(Optional IfRngConcatAllVals As Boolean = True,
-'                Optional Sep As String = ", ")
-'
-'   Returns text from the copied object (clipboard text or range)
-'
-'   >> NOT TO BE USED ON-SHEET << creates a sheet each refresh
+''   Loops through folders to find paths matching C:\Users\...\AppData
+''   then extracts Username from correct path. Superior to reading
+''   .FullName of workbook which does not work for OneDrive files
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' Get_CopiedRangeVals()
+'------------------------------------------------------------------- VBA
+'  Get_MacUsername()
 '
-'   If range copied, returns an array of each non-blank Cell.Value
-'
-'   >> NOT TO BE USED ON-SHEET << creates a sheet each refresh
+''   Reads Activeworkbook.FullName property to get Mac user
 '
 '-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
+'  Get_Username()
+'
+''   Returns username regardless of Windows or Mac OS
+'
 '-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
+'  Get_DesktopPath()
+'
+''   Returns Mac or Windows desktop directory (even if on OneDrive)
+'
+'-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
+'  Delete_FileAndFolder(ByVal aFilePath As String)
+'
+''   Read code directly prior to use
+'
+'-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
+'  Print_Pad()
+'
+''   Uses Debug.Print to print a timestamped seperator of "======"
+'
+'-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
+'  Print_Named(Something, Optional Label)
+'
+''   Uses Debug.Print to add a space between each {Something} printed,
+''   labels each {Something} if {Label} supplied
+'
+'-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
+'  Clipboard_Load(ByVal aString As String)
+'
+''   Stores {aString} in clipboard
+'
+'-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
+'  Clipboard_Read(Optional IfRngConcatAllVals As Boolean = True,
+'                 Optional Sep As String = ", ")
+'
+''   Returns text from the copied object (clipboard text or range)
+'
+''   >> NOT TO BE USED ON-SHEET << creates a sheet each refresh
+'
+'-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
+'  Get_CopiedRangeVals()
+'
+''   If range copied, returns an array of each non-blank Cell.Value
+'
+''   >> NOT TO BE USED ON-SHEET << creates a sheet each refresh
+'
+'-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
 ' Clipboard_IsRange()
 '
-'   Returns True if a range is currently copied; only works in VBA
+''   Returns True if a range is currently copied; only works in VBA
 '
 '-------------------------------------------------------------------
 

@@ -1,69 +1,70 @@
 Attribute VB_Name = "zRun_R"
 Option Explicit
 '===================================================================
+'## Module: zRun_R.bas
 'Subs and Functions to interface with R in VBA; relies on
 'zPortable_Subs and zPortable_Functions from github.com/AltraSol/VBA
 '===================================================================
-'-------------------------------------------------------------------
-' QuickRun_RScript(ByVal ScriptContents As String)
+'------------------------------------------------------------------- VBA
+'  QuickRun_RScript(ByVal ScriptContents As String)
 '
-'   Writes a temporary .R script containing {ScriptContents}, runs
-'   it, prompts for the deletion of the temporary script
-'
-'-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' WriteTemp_RScript(ByVal ScriptContents As String)
-'
-'   Creates a random named temporary folder on desktop, creates an
-'   .R file "Temp.R" containing {ScriptContents}, returns Temp.R path
+''   Writes a temporary .R script containing {ScriptContents}, runs
+''   it, prompts for the deletion of the temporary script
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' FindAndRun_RScript(ByVal ScriptLocation)
+'------------------------------------------------------------------- VBA
+'  WriteTemp_RScript(ByVal ScriptContents As String)
 '
-'   Takes a string or cell reference {RScriptPath} & runs it on the
-'   latest version of R on the OS
-'
-'-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' Run_RScript(ByVal RLocation As String, _
-'             ByVal ScriptLocation As String, _
-'             Optional ByVal Visibility As String)
-'
-'   Uses the RScript.exe pointed to by {RLocation} to run the script
-'   found at {ScriptLocation}. Rscript.exe window displayed by default,
-'   but {Visibility}:= "VeryHidden" or "Minimized" can be used
+''   Creates a random named temporary folder on desktop, creates an
+''   .R file "Temp.R" containing {ScriptContents}, returns Temp.R path
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' Get_RExePath() As String
+'------------------------------------------------------------------- VBA
+'  FindAndRun_RScript(ByVal ScriptLocation)
 '
-'   Returns the path to the latest version of Rscript.exe
-'
-'-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' Get_LatestRVersion(ByVal RVersions As Variant)
-'
-'   Returns the latest version of R currently installed
+''   Takes a string or cell reference {RScriptPath} & runs it on the
+''   latest version of R on the OS
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' Get_RVersions(ByVal RFolderPath As String)
+'------------------------------------------------------------------- VBA
+'  Run_RScript(ByVal RLocation As String, _
+'              ByVal ScriptLocation As String, _
+'              Optional ByVal Visibility As String)
 '
-'   Returns an array of the R versions currently installed
-'
-'-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' Get_RFolder() As String
-'
-'   Returns the parent R folder path which houses the installed
-'   versions of R on the OS from which the sub is called
+''   Uses the RScript.exe pointed to by {RLocation} to run the script
+''   found at {ScriptLocation}. Rscript.exe window displayed by default,
+''   but {Visibility}:= "VeryHidden" or "Minimized" can be used
 '
 '-------------------------------------------------------------------
-'-------------------------------------------------------------------
-' Delete_FileAndFolder(ByVal aPath As String)
+'------------------------------------------------------------------- VBA
+'  Get_RExePath() As String
 '
-'   Deletes {aPath} and it's container folder (including all other files)
+''   Returns the path to the latest version of Rscript.exe
+'
+'-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
+'  Get_LatestRVersion(ByVal RVersions As Variant)
+'
+''   Returns the latest version of R currently installed
+'
+'-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
+'  Get_RVersions(ByVal RFolderPath As String)
+'
+''   Returns an array of the R versions currently installed
+'
+'-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
+'  Get_RFolder() As String
+'
+''   Returns the parent R folder path which houses the installed
+''   versions of R on the OS from which the sub is called
+'
+'-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
+'  Delete_FileAndFolder(ByVal aPath As String)
+'
+''   Deletes {aPath} and it's container folder (including all other files)
 '
 '-------------------------------------------------------------------
 
