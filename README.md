@@ -1,3 +1,4 @@
 # VBA
 
-Module explanation available via VBA-All
+## zPortable_Functions
+Portable module of functions which can be exported to any workbook
