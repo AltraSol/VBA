@@ -294,3 +294,10 @@ zPortable_Subs and zPortable_Functions from github.com/AltraSol/VBA
 '   Deletes {aPath} and it's container folder (including all other files)
 
 ```
+``` VBA
+  Test_QuickRun_RScript()
+
+'   Writes a computationally intensive script to Desktop and asks
+'   if you want to run it (to visually verify all zRun_R f(x) worked)
+
+```
