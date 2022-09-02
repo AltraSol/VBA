@@ -62,11 +62,48 @@ Option Explicit
 '
 '-------------------------------------------------------------------
 '------------------------------------------------------------------- VBA
-'  Delete_FileAndFolder(ByVal aPath As String)
+'  Test_QuickRun_RScript()
 '
-''   Deletes {aPath} and it's container folder (including all other files)
+''   Writes a computationally intensive script to Desktop and asks
+''   if you want to run it (to visually verify all zRun_R f(x) worked)
 '
 '-------------------------------------------------------------------
+
+Sub Test_QuickRun_RScript()
+
+'NOTE: It's best to paste a script into a cell and reading
+'it's .Value as opposed to writing it in the VBA editor
+
+Dim PackagesList As String, _
+    arrPackages As Variant, _
+    i As Integer, _
+    HighComputeScript As String
+    
+    PackagesList = "pdftools, tesseract, stringr, dplyr, qdapRegex, tidyr, stringi, purrr, openxlsx, tidyverse"
+    arrPackages = Split(PackagesList, ", ")
+    
+    For i = LBound(arrPackages) To UBound(arrPackages)
+
+        'Formatting to:
+        'if (!require(Package)) install.packages('Package')
+        'library(Package)
+        
+        'Installing & referencing many packages is computationally intensive
+        'which allows a chance to verify the script is running on the device
+        
+        HighComputeScript = HighComputeScript & vbNewLine & _
+                            "if (!require(" & arrPackages(i) & _
+                            ")) install.packages('" & arrPackages(i) & "')" & _
+                            vbNewLine & "library (" & arrPackages(i) & ")"
+    Next i
+    
+        Dim Answer: Answer = MsgBox("The following script is about to be ran in R:" & _
+                                    vbNewLine & HighComputeScript & vbNewLine & vbNewLine & _
+                                    "Press OK to continue, or Cancel to exit.", vbOKCancel)
+                                    
+        If Answer = vbOK Then Call QuickRun_RScript(HighComputeScript)
+        
+End Sub
 
 Sub QuickRun_RScript(ByVal ScriptContents As String)
 
