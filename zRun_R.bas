@@ -1,26 +1,30 @@
 Attribute VB_Name = "zRun_R"
 Option Explicit
 '===================================================================
-'Portable module of subs for interfacing with R in VBA
-'TODO: Verify working on MacOS
+'Subs and Functions to interface with R in VBA; relies on
+'zPortable_Subs and zPortable_Functions from github.com/AltraSol/VBA
 '===================================================================
 '-------------------------------------------------------------------
-' Temp_RScript(ScriptContents As String)
+' QuickRun_RScript(ByVal ScriptContents As String)
 '
-'   Creates a random named temporary folder, creates an .R script
-'   titled Temp.R containing {ScriptContents}, returns Temp.R path
-'
-'-------------------------------------------------------------------
-' Get_DesktopPath()
-'
-'   Returns Windows desktop directory (even if hosted on OneDrive)
+'   Writes a temporary .R script containing {ScriptContents}, runs
+'   it, prompts for the deletion of the temporary script
 '
 '-------------------------------------------------------------------
-' Easy_RScript(ByVal RScriptPath)
+'-------------------------------------------------------------------
+' WriteTemp_RScript(ByVal ScriptContents As String)
+'
+'   Creates a random named temporary folder on desktop, creates an
+'   .R file "Temp.R" containing {ScriptContents}, returns Temp.R path
+'
+'-------------------------------------------------------------------
+'-------------------------------------------------------------------
+' FindAndRun_RScript(ByVal ScriptLocation)
 '
 '   Takes a string or cell reference {RScriptPath} & runs it on the
 '   latest version of R on the OS
 '
+'-------------------------------------------------------------------
 '-------------------------------------------------------------------
 ' Run_RScript(ByVal RLocation As String, _
 '             ByVal ScriptLocation As String, _
@@ -31,20 +35,24 @@ Option Explicit
 '   but {Visibility}:= "VeryHidden" or "Minimized" can be used
 '
 '-------------------------------------------------------------------
+'-------------------------------------------------------------------
 ' Get_RExePath() As String
 '
 '   Returns the path to the latest version of Rscript.exe
 '
+'-------------------------------------------------------------------
 '-------------------------------------------------------------------
 ' Get_LatestRVersion(ByVal RVersions As Variant)
 '
 '   Returns the latest version of R currently installed
 '
 '-------------------------------------------------------------------
+'-------------------------------------------------------------------
 ' Get_RVersions(ByVal RFolderPath As String)
 '
 '   Returns an array of the R versions currently installed
 '
+'-------------------------------------------------------------------
 '-------------------------------------------------------------------
 ' Get_RFolder() As String
 '
@@ -52,105 +60,83 @@ Option Explicit
 '   versions of R on the OS from which the sub is called
 '
 '-------------------------------------------------------------------
-' MyOS()
+'-------------------------------------------------------------------
+' Delete_FileAndFolder(ByVal aPath As String)
 '
-'   'Returns "Windows",  "Mac", or "Neither Windows or Mac"
+'   Deletes {aPath} and it's container folder (including all other files)
 '
 '-------------------------------------------------------------------
 
-Sub R_Example()
+Sub QuickRun_RScript(ByVal ScriptContents As String)
 
-    Call Easy_RScript("...Something.R")
+Dim TempScriptPath As String, _
+    TempFolderPath As String, _
+    i As Integer, _
+    Slash As String, _
+    Answer As String
     
+        TempScriptPath = WriteTemp_RScript(ScriptContents)
+        If MyOS = "Windows" Then Slash = "\" Else Slash = "/"
+        Call FindAndRun_RScript(TempScriptPath)
+                
+                'NOTE: MsgBox question serves as both an option and a workaround for long R procedures
+                'which prevent VBA's command line call from deleting Temp.R prior to Rscript.exe unloading Temp.R
+                Answer = MsgBox("Temporary script written to desktop and ran in R." & vbNewLine & vbNewLine & _
+                                "Would you like to delete the temporary file and it's folder?", vbYesNo, "Delete Temp.R File & Folder?")
+            
+                If Answer = vbYes Then
+                    'Deletion successful
+                    If Delete_FileAndFolder(TempScriptPath) = True Then
+                        
+                        'Initially set {TempFolderPath} to {TempScriptPath} prior to loop
+                        TempFolderPath = TempScriptPath
+                        
+                        'Reduce {TempFolderPath} until it's a directory
+                        For i = Len(TempFolderPath) To 1 Step -1
+            
+                            TempFolderPath = Left(TempFolderPath, Len(TempFolderPath) - 1)
+                            If Right(TempFolderPath, 1) = Slash Then
+                                TempFolderPath = Left(TempFolderPath, Len(TempFolderPath) - 1)
+                                Exit For
+                            End If
+                            
+                        Next i
+                        MsgBox "Temp.R and folder directory " & TempFolderPath & " deleted."
+                    Else
+                        MsgBox "Error deleting " & TempFolderPath
+                    End If
+                End If
+            
 End Sub
 
-Sub R_CellExample()
-
-Dim ScriptLocation As String
-    'Paste script in selection that is long enough to keep RScript window open
-    ScriptLocation = Temp_RScript(Selection.Cells(1).Value)
-
-    Call Easy_RScript(ScriptLocation)
-    
-End Sub
-
-Function Temp_RScript(ScriptContents As String)
+Function WriteTemp_RScript(ByVal ScriptContents As String)
 
 Dim FSO As Object: Set FSO = CreateObject("Scripting.FileSystemObject")
 Dim TempFolder As String
     
     'Create temporary folder to house temp.R
     TempFolder = Get_DesktopPath & "\Temp" & Left(Format(Now(), "ss") * Rnd() * 1000, 3)
+
     Call MkDir(TempFolder)
-    
+        
     'Write temp.R into {TempFolder}
     Dim Fileout As Object
     Set Fileout = FSO.CreateTextFile(TempFolder & "\" & "Temp.R", True, False)
         Fileout.Write ScriptContents
         Fileout.Close
             
-            Temp_RScript = TempFolder & "\" & "Temp.R"
+            WriteTemp_RScript = TempFolder & "\" & "Temp.R"
 
 End Function
 
-Function Get_DesktopPath()
+Sub FindAndRun_RScript(ByVal ScriptLocation)
 
-If MyOS = "Windows" Then
-    
-    Dim FSO As Object: Set FSO = CreateObject("Scripting.FileSystemObject")
-    Dim UserFolder As Object: Set UserFolder = FSO.GetFolder("C:\Users")
-    
-    Dim Item As Object, _
-        UserPath As String, _
-        DesktopPath As String
-    
-        
-        For Each Item In UserFolder.SubFolders
-            'TODO verify this works on other windows OS
-            If InStr(Item.Path, "All Users") = 0 And _
-               InStr(Item.Path, "Default") = 0 And _
-               InStr(Item.Path, "Public") = 0 Then
-               
-               UserPath = Item.Path
-               Exit For
-            
-            End If
-        Next Item
-            
-            Dim UserNameFolder As Object: Set UserNameFolder = FSO.GetFolder(UserPath)
-            For Each Item In UserNameFolder.SubFolders
-                If InStr(Item.Path, "Desktop") > 1 Then
-                    DesktopPath = Item.Path
-                    Exit For
-                End If
-            Next Item
-                
-                'C:\Users\UserName\Desktop will be found in above procedure
-                'except in cases that this file is hosted on OneDrive
-                If DesktopPath = vbNullString Then
-                    DesktopPath = UserPath & "\OneDrive\Desktop"
-                End If
-                
-                    Set UserFolder = Nothing
-                    Set UserNameFolder = Nothing
-                    Set FSO = Nothing
-            
-ElseIf MyOS = "Mac" Then
-    'TODO
-End If
-
-    Get_DesktopPath = DesktopPath
-    
-End Function
-
-Sub Easy_RScript(ByVal RScriptPath)
-
-If TypeName(RScriptPath) = "Range" Then
-    RScriptPath = RScriptPath.Cells(1).Value
+If TypeName(ScriptLocation) = "Range" Then
+    ScriptLocation = ScriptLocation.Cells(1).Value
 End If
 
 Call Run_RScript(RLocation:=Get_RExePath, _
-                 ScriptLocation:=RScriptPath, _
+                 ScriptLocation:=ScriptLocation, _
                  Visibility:="Visible")
                  
 End Sub
@@ -238,15 +224,4 @@ Dim OS As String: OS = MyOS
 
 End Function
 
-Function MyOS()
-
-    If InStr(1, Application.OperatingSystem, "Windows") <> 0 Then
-        MyOS = "Windows"
-    ElseIf InStr(1, Application.OperatingSystem, "Mac") <> 0 Then
-        MyOS = "Mac"
-    Else
-        MyOS = "Neither Windows or Mac"
-    End If
-        
-End Function
 
