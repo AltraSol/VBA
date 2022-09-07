@@ -1,5 +1,7 @@
 # VBA-tools
-A collection of functions to interface R with VBA, add functionality to Excel, or improve VBA debugging and readability. Download VBA-All.xlsm for a clearer picture of how the code below works.
+A collection of functions to interface R with VBA, add functionality to Excel, or improve VBA debugging and readability. 
+
+Download VBA-All.xlsm for a clearer picture of how the code below works.
 
 _Note: macOS compatability is still being tested_
 
