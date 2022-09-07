@@ -1,7 +1,7 @@
 # VBA-tools
 A collection of functions to interface VBA with R, add functionality to Excel, or improve VBA debugging and readability. Download VBA-All.xlsm for a clearer picture of how the code below works.
 
-_Note: Mac OS compatability is WIP_
+_Note: macOS compatability is still being tested_
 
 ## Module: zPortable_Subs.bas
 Portable module of subs which can be exported to any workbook and are
