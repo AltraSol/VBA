@@ -1,5 +1,5 @@
 # VBA-tools
-A collection of useful functions to add functionality to Excel, interface VBA with R, and improve the readability and debugging in VBA. Download VBA-All.xlsm for improved readability.
+A collection of functions to add functionality to Excel, interface VBA with R, or improve the readability and debugging in VBA. Download VBA-All.xlsm for improved readability.
 
 ## Module: zPortable_Subs.bas
 Portable module of subs which can be exported to any workbook and are
