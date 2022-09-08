@@ -233,7 +233,7 @@ and are only dependent on one-another
 
 ## Module: zRun_R.bas
 Subs and Functions to interface with R in VBA; relies on
-zPortable_Subs and zPortable_Functions from github.com/AltraSol/VBA
+zPortable_Subs and zPortable_Functions from github.com/ulchc/VBA-tools
 
 ``` VBA
   QuickRun_RScript(ByVal ScriptContents As String)
