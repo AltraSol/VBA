@@ -91,7 +91,7 @@ only dependent on one-another (if at all)
   CopySheetsToWorkbook()
 
 '   Copies each sheet within each workbook in a given folder path to
-    the current workbook
+'   the current workbook
 
 ```
 
