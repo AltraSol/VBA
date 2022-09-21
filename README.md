@@ -87,6 +87,13 @@ only dependent on one-another (if at all)
 '   Toggles display of ribbon, formula bar, status bar & headings
 
 ```
+``` VBA
+  CopySheetsToWorkbook()
+
+'   Copies each sheet within each workbook in a given folder path to
+    the current workbook
+
+```
 
 ## Module: zPortable_Functions.bas
 Portable module of functions which can be exported to any workbook
