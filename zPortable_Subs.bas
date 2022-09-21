@@ -83,6 +83,38 @@ Option Explicit
 ''   Toggles display of ribbon, formula bar, status bar & headings
 '
 '-------------------------------------------------------------------
+'------------------------------------------------------------------- VBA
+'  CopySheetsToWorkbook()
+'
+''   Copies each sheet within each workbook in a given folder path to 
+'    the current workbook
+'
+'-------------------------------------------------------------------
+
+Sub CopySheetsToWorkbook(ByVal FromFolder As String)
+Application.ScreenUpdating = False
+
+Dim aWorkbook As Workbook, _
+    aSheet As Worksheet, _
+    wbName As String: wbName = Dir(FromFolder & "*.xlsx")
+        
+        Do While wbName <> vbNullString
+            Workbooks.Open Filename:=FromFolder & wbName, ReadOnly:=True
+            Set aWorkbook = ActiveWorkbook
+            
+                For Each aSheet In aWorkbook.Sheets
+                    aSheet.Copy After:=ThisWorkbook.Sheets(1)
+                    Application.StatusBar = "Adding sheets from " & aWorkbook.Name & "..."
+                Next aSheet
+        
+            aWorkbook.Close
+            wbName = Dir()
+        Loop
+
+Application.ScreenUpdating = True
+Application.StatusBar = False
+
+End Sub
 
 Sub ToggleDisplayMode()
 
