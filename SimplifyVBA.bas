@@ -7,7 +7,7 @@ Option Explicit
 '#  SimplifyVBA ¬ github.com/ulchc (10-17-22)
 '===============================================================================================================================================================================================================================================================
 '
-'A collection of functions to interface R with VBA, add functionality to Excel, or improve VBA debugging and readability.
+'A collection of code to interface R with VBA, make application building easier, or improve VBA readability.
 '
 'Prefix: ƒ— denotes a function which has a notable load time or file interactions outside ThisWorkbook. Only use these within the VBA IDE.
 '
@@ -74,6 +74,12 @@ Public GlobalTempMenuSections() As Variant
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
 ' ListFiles(FromFolder As String)
+'
+''   Returns an array of all file paths located in {FromFolder}
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+' ListFolders(FromFolder As String)
 '
 ''   Returns an array of all file paths located in {FromFolder}
 '
@@ -351,6 +357,10 @@ Public GlobalTempMenuSections() As Variant
 ''    is a plain string which is automatically combined with the local
 ''    download folder to create the full path to save to.
 '
+''    {SaveAsType} can be "xlsx", "xlsm", "xlsb", or "csv". A bracketed
+''    (n) will automatically be added to the file name if it is
+''    already taken.
+'
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
 ' SaveToDownloads_Multiple( _
@@ -606,7 +616,7 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  FindAndRun_RScript(ByVal ScriptLocation)
+'  LocateRScript_Run(ByVal Script_Path)
 '
 ''   Takes a string or cell reference {RScriptPath} & runs it on the
 ''   latest version of R on the OS
@@ -614,18 +624,18 @@ Public GlobalTempMenuSections() As Variant
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
 ' Run_RScript( _
-'     RLocation As String, _
-'     ScriptLocation As String, _
+'     RScriptExe_Path As String, _
+'     Script_Path As String, _
 '     Optional Visibility As String, _
 '     Optional OnErrorEnd As Boolean = True _
 ' )
-''   Uses the RScript.exe pointed to by {RLocation} to run the script
-''   found at {ScriptLocation}. Rscript.exe window displayed by default,
+''   Uses the RScript.exe pointed to by {RScriptExe_Path} to run the script
+''   found at {Script_Path}. Rscript.exe window displayed by default,
 ''   but {Visibility}:= "VeryHidden" or "Minimized" can be used.
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  Get_RExePath() As String
+'  Get_RScriptExePath() As String
 '
 ''   Returns the path to the latest version of Rscript.exe
 '
@@ -756,7 +766,7 @@ ScreenUpdatingState = Application.ScreenUpdating
 Application.ScreenUpdating = False
 
 Application.StatusBar = "Opening " & Right(FromFile, Len(FromFile) - InStrRev(FromFile, PlatformFileSep())) & "..."
-Workbooks.Open Filename:=FromFile, ReadOnly:=True
+Workbooks.Open FileName:=FromFile, ReadOnly:=True
 Set wb = ActiveWorkbook
     
     wb.Sheets(1).Select
@@ -804,7 +814,7 @@ ScreenUpdatingState = Application.ScreenUpdating
 Application.ScreenUpdating = False
 
 Application.StatusBar = "Opening " & Right(FromFile, Len(FromFile) - InStrRev(FromFile, PlatformFileSep())) & "..."
-Workbooks.Open Filename:=FromFile, ReadOnly:=True
+Workbooks.Open FileName:=FromFile, ReadOnly:=True
 Set wb = ActiveWorkbook
 
     wb.Sheets(1).Select
@@ -875,7 +885,7 @@ Dim ws As Worksheet, _
 
     For Each wbFile In wbFiles()
     
-        Workbooks.Open Filename:=wbFile, ReadOnly:=True
+        Workbooks.Open FileName:=wbFile, ReadOnly:=True
         Set wb = ActiveWorkbook
         wb.Sheets(1).Select
         SheetCount = wb.Sheets.Count
@@ -960,7 +970,7 @@ Dim ws As Worksheet, _
     NewSheets() As Variant
 
     For Each wbFile In wbFiles()
-        Workbooks.Open Filename:=wbFile, ReadOnly:=True
+        Workbooks.Open FileName:=wbFile, ReadOnly:=True
             
             Set wb = ActiveWorkbook
             wb.Sheets(1).Select
@@ -1112,6 +1122,35 @@ Dim Sep As String, _
     
 NoFiles:
 ListFiles = vbNullString
+    
+End Function
+
+Function ListFolders(FromFolder As String)
+
+Dim Sep As String, _
+    DirPaths As String, _
+    NextPath As String, _
+    ArrMatches() As Variant
+    
+    Sep = PlatformFileSep()
+    'Ensures {FromFolder} ends with a PlatformFileSep()
+    FromFolder = Replace(FromFolder & Sep, Sep & Sep, Sep)
+    DirPaths = Dir(FromFolder, vbDirectory)
+    
+        Do While DirPaths <> vbNullString
+            NextPath = FromFolder & DirPaths
+                Call ReDim_Add(ArrMatches(), NextPath)
+            DirPaths = Dir()
+        Loop
+        
+    On Error GoTo NoFiles
+    If LBound(ArrMatches()) = 0 Then
+        ListFolders = ArrMatches()
+        Exit Function
+    End If
+    
+NoFiles:
+ListFolders = vbNullString
     
 End Function
 
@@ -1523,6 +1562,35 @@ If GlobalUser <> vbNullString Then
     Exit Function
 End If
 
+Dim UserDirectory As String, _
+    UserFolders As Variant, _
+    FilterTerms As Variant, _
+    Term As Variant, _
+    FilteredFolders As Variant
+
+    UserDirectory = "C:\Users\"
+    UserFolders = ListFolders(UserDirectory)
+        
+        'Non-username folders contained within the UserDirectory
+        FilterTerms = Array(".", "Public", "AppData", "Default", "All Users")
+        FilteredFolders = UserFolders 'Initalize
+        
+        For Each Term In FilterTerms
+            FilteredFolders = Filter(FilteredFolders, CStr(Term), False)
+        Next Term
+        
+        GlobalUser = Replace(FilteredFolders(0), "C:\Users\", vbNullString)
+        Get_WindowsUsername = GlobalUser
+        
+End Function
+
+Function Get_WindowsUsernameOld()
+
+If GlobalUser <> vbNullString Then
+    Get_WindowsUsername = GlobalUser
+    Exit Function
+End If
+
 If MyOS() <> "Windows" Then
     Get_WindowsUsername = ""
     Exit Function
@@ -1623,7 +1691,7 @@ Sub SaveToDownloads_Multiple( _
     SaveTabsNamed_Array As Variant, _
     AsFileNamed As String, _
     OpenAfterSave As Boolean, _
-    Optional SaveAsType As String = "xlsx" _
+    Optional ByVal SaveAsType As String = "xlsx" _
 )
 
 Dim IdealFileName As String, _
@@ -1664,20 +1732,30 @@ Loop
         End If
     
     Next j
-    
+
 ThisWorkbook.Activate: Application.StatusBar = "Saving sheet to the following location: " & TryFileName & "..."
-With wbNew
-    .Activate
-    .SaveAs _
-        Filename:=TryFileName, _
-        FileFormat:=xlOpenXMLWorkbook, _
-        CreateBackup:=False
-End With
+    Select Case SaveAsType
+        Case "xlsx"
+            SaveAsType = xlOpenXMLWorkbook
+        Case "xlsm"
+            SaveAsType = xlOpenXMLWorkbookMacroEnabled
+        Case "xlsb"
+            SaveAsType = xlExcel12
+        Case "csv"
+            SaveAsType = xlCSV
+    End Select
+    With wbNew
+        .Activate
+        .SaveAs _
+            FileName:=TryFileName, _
+            FileFormat:=SaveAsType, _
+            CreateBackup:=False
+    End With
 ActiveWindow.Close
 
 Application.StatusBar = False
 If OpenAfterSave = True Then
-    Workbooks.Open Filename:=TryFileName
+    Workbooks.Open FileName:=TryFileName
 End If
 
 End Sub
@@ -1692,6 +1770,7 @@ Sub SaveToDownloads( _
 Dim IdealFileName As String, _
     TryFileName As String, _
     VisibleProp, _
+    wbNew As Workbook, _
     i As Integer
     
     Application.StatusBar = "Copying sheet " & Chr(34) & SaveTabNamed & Chr(34) & " to downloads folder..."
@@ -1704,6 +1783,8 @@ Dim IdealFileName As String, _
         .Visible = VisibleProp
     End With
     
+    Set wbNew = ActiveWorkbook
+    
     IdealFileName = Get_DownloadsPath() & PlatformFileSep() & AsFileNamed & "." & SaveAsType
     TryFileName = IdealFileName
     
@@ -1712,16 +1793,29 @@ Dim IdealFileName As String, _
         TryFileName = Replace(IdealFileName, ".", " (" & i & ").")
     Loop
 
-    Application.StatusBar = "Saving sheet to the following location: " & TryFileName & "..."
-    ActiveWorkbook.SaveAs _
-        Filename:=TryFileName, _
-        FileFormat:=xlOpenXMLWorkbook, _
-        CreateBackup:=False
-    ActiveWindow.Close
+Application.StatusBar = "Saving sheet to the following location: " & TryFileName & "..."
+    Select Case SaveAsType
+        Case "xlsx"
+            SaveAsType = xlOpenXMLWorkbook
+        Case "xlsm"
+            SaveAsType = xlOpenXMLWorkbookMacroEnabled
+        Case "xlsb"
+            SaveAsType = xlExcel12
+        Case "csv"
+            SaveAsType = xlCSV
+    End Select
+    With wbNew
+        .Activate
+        .SaveAs _
+            FileName:=TryFileName, _
+            FileFormat:=SaveAsType, _
+            CreateBackup:=False
+    End With
+ActiveWindow.Close
 
     Application.StatusBar = False
     If OpenAfterSave = True Then
-        Workbooks.Open Filename:=TryFileName
+        Workbooks.Open FileName:=TryFileName
     End If
 
 End Sub
@@ -2597,7 +2691,7 @@ Print_Pad
     Print_Named Get_DesktopPath(), "Get_DesktopPath()"
   Print_Named Get_DownloadsPath(), "Get_DownloadsPath()"
         Print_Named Get_RFolder(), "Get_RFolder()"
-       Print_Named Get_RExePath(), "Get_RExePath()"
+       Print_Named Get_RScriptExePath(), "Get_RScriptExePath()"
 Print_Pad
 End Sub
 
@@ -2647,7 +2741,7 @@ Dim TempScriptPath As String, _
     
         TempScriptPath = WriteTemp_RScript(ScriptContents)
         If MyOS = "Windows" Then Slash = "\" Else Slash = "/"
-        Call FindAndRun_RScript(TempScriptPath)
+        Call LocateRScript_Run(TempScriptPath)
                 
                 'NOTE: MsgBox question serves as both an option and a workaround for long R procedures
                 'which prevent VBA's command line call from deleting Temp.R prior to Rscript.exe unloading Temp.R
@@ -2701,23 +2795,19 @@ Set Fileout = Nothing
 Set FSO = Nothing
 End Function
 
-Sub FindAndRun_RScript(ScriptLocation)
+Sub LocateRScript_Run(Script_Path As String)
 
-If TypeName(ScriptLocation) = "Range" Then
-    ScriptLocation = ScriptLocation.Cells(1).Value
-End If
+    Call Run_RScript( _
+        RScriptExe_Path:=Get_RScriptExePath, _
+        Script_Path:=Script_Path, _
+        Visibility:="Visible" _
+    )
 
-Call Run_RScript( _
-    RLocation:=Get_RExePath, _
-    ScriptLocation:=ScriptLocation, _
-    Visibility:="Visible" _
-)
-                 
 End Sub
 
 Sub Run_RScript( _
-    RLocation As String, _
-    ByVal ScriptLocation As String, _
+    RScriptExe_Path As String, _
+    Script_Path As String, _
     Optional Visibility As String, _
     Optional OnErrorEnd As Boolean = True _
 )
@@ -2727,9 +2817,9 @@ Dim Style As Integer: Style = 1
 
 Dim oShell As Object, _
     ErrorCode As Integer, _
-    eRExe As String, _
-    eRScript As String, _
-    RExe_RScript As String
+    Escaped_RScriptExe As String, _
+    Escaped_Script As String, _
+    RShellCommand As String
     
     If Visibility = "VeryHidden" Then
         Style = 0
@@ -2739,10 +2829,10 @@ Dim oShell As Object, _
     
 Set oShell = CreateObject("WScript.Shell")
         
-    eRExe = Chr(34) & Replace(RLocation, "\", "\\") & Chr(34)
-    eRScript = Chr(34) & Replace(ScriptLocation, "\", "\\") & Chr(34)
-    RExe_RScript = eRExe & eRScript
-    ErrorCode = oShell.Run(RExe_RScript, Style, WaitTillComplete)
+    Escaped_RScriptExe = Chr(34) & Replace(RScriptExe_Path, "\", "\\") & Chr(34)
+    Escaped_Script = Chr(34) & Replace(Script_Path, "\", "\\") & Chr(34)
+    RShellCommand = Escaped_RScriptExe & Escaped_Script
+    ErrorCode = oShell.Run(RShellCommand, Style, WaitTillComplete)
 
         If OnErrorEnd = True And ErrorCode <> 0 Then
             MsgBox "Error attempting to run script. Ensure that any potential exceptions are wrapped in try().", vbInformation, "Run Failure"
@@ -2754,18 +2844,17 @@ Set oShell = CreateObject("WScript.Shell")
 Set oShell = Nothing
 End Sub
 
-Function Get_RExePath() As String
-
+Function Get_RScriptExePath() As String
 Dim RVersions As Variant: RVersions = Get_RVersions(Get_RFolder)
 Dim LatestRVersion As String: LatestRVersion = Get_LatestRVersion(RVersions)
     
-    Get_RExePath = LatestRVersion & "\bin\Rscript.exe"
+    Get_RScriptExePath = LatestRVersion & "\bin\Rscript.exe"
              
 End Function
 
-Function Get_LatestRVersion(ByVal RVersions As Variant)
-
+Function Get_LatestRVersion(RVersions As Variant)
 Dim i As Integer
+    
     For i = LBound(RVersions) To UBound(RVersions)
         If Get_LatestRVersion < RVersions(i) Then
            Get_LatestRVersion = RVersions(i)
@@ -2774,31 +2863,12 @@ Dim i As Integer
     
 End Function
 
-Function Get_RVersions(ByVal RFolderPath As String)
-
-Dim FSO As Object, _
-    RProgramFolder As Object, _
-    VersionFolder As Object, _
-    arrRVersions() As Variant, _
-    i As Integer
-    
-    Set FSO = CreateObject("Scripting.FileSystemObject")
-    Set RProgramFolder = FSO.GetFolder(RFolderPath)
-
-        For Each VersionFolder In RProgramFolder.SubFolders
-            ReDim Preserve arrRVersions(i): i = i + 1
-            arrRVersions(UBound(arrRVersions)) = VersionFolder.Path
-        Next VersionFolder
-    
-            Set VersionFolder = Nothing
-            Set RProgramFolder = Nothing
-            Set FSO = Nothing
-                
-               Get_RVersions = arrRVersions
+Function Get_RVersions(RFolderPath As String)
+    'Filter out C:\Program Files\R\.. & C:\Program Files\R\.
+    Get_RVersions = Filter(ListFolders(RFolderPath), PlatformFileSep() & ".", False)
 End Function
 
 Function Get_RFolder() As String
-
 Dim OS As String: OS = MyOS()
 
     If OS = "Windows" Then
@@ -2806,7 +2876,38 @@ Dim OS As String: OS = MyOS()
     ElseIf OS = "Mac" Then
         Get_RFolder = "/Library/Frameworks/R.framework/Resources/bin/R"
     End If
+    
+End Function
 
+Function WriteScript( _
+    TextContents As String, _
+    SaveToDir As String, _
+    Optional OverWrite As Boolean = False, _
+    Optional ScriptName As String = "Script.R" _
+)
+
+'Add FileSep to directory string if required
+If Right(SaveToDir, 1) <> PlatformFileSep() Then SaveToDir = SaveToDir & PlatformFileSep()
+
+If OverWrite <> True Then
+    If Dir(SaveToDir & ScriptName) <> vbNullString Then
+        Dim i As Integer, SplitName As Variant, TryName As String
+        For i = 1 To 100
+            SplitName = Split(ScriptName, ".")
+            TryName = SplitName(0) & " (" & i & ")" & "." & SplitName(1)
+            If Dir(SaveToDir & TryName) = vbNullString Then
+                ScriptName = TryName
+                Exit For
+            End If
+        Next i
+    End If
+End If
+
+Open SaveToDir & ScriptName For Output As #1
+Print #1, TextContents
+Close #1
+
+WriteScript = CStr(SaveToDir & ScriptName)
 End Function
 
 '===============================================================================================================================================================================================================================================================
