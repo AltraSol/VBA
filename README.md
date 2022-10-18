@@ -10,7 +10,7 @@ Note: macOS compatability is still being tested
 ##  Functions
 
 
-Prefix: ƒ— denotes a function which has a notable load time or file interactions outside ThisWorkbook. Only use within VBA.
+Prefix: ƒ— denotes a function which has a notable load time or file interactions outside ThisWorkbook. Only use these within the VBA IDE.
 
 ``` VBA
 Public GlobalUser As String
@@ -308,10 +308,12 @@ Public GlobalUser As String
 
 ```
 ``` VBA
- InsertSlicer(NamedRange As String,
-              NumCols As Integer,
-              aHeight As Double,
-              aWidth As Double)
+  Sub InsertSlicer( _
+      NamedRange As String, _
+      NumCols As Integer, _
+      aHeight As Double, _
+      aWidth As Double _
+  )
 
 '   Creates a slicer for the active sheet named range {NamedRange}
 '   with {NumCols} buttons per slicer row, and with dimensions
@@ -326,11 +328,12 @@ Public GlobalUser As String
 
 ```
 ``` VBA
-  MoveSlicer(SlicerSelection,
-            rngPaste As Range,
-            leftOffset,
-            IncTop)
-
+  Sub MoveSlicer( _
+      SlicerSelection, _
+      rngPaste As Range, _
+      leftOffset, _
+      IncTop _
+  )
 '   Takes Selection as {SlicerSelection}, cuts & pastes it to a rough
 '   location {rngPaste} to be incrementally adjusted from paste
 '   location by {leftOffset} and {IncTop}
@@ -363,7 +366,7 @@ Public GlobalUser As String
 
      Private Sub Workbook_BeforeClose(Cancel As Boolean)
          Call Remove_TempMenuCommands
-         Call Remove_TempMenuCommandsections
+         Call Remove_TempMenuCommandSections
      End Sub
 
 ``` VBA
@@ -375,6 +378,76 @@ Public GlobalTempMenuSections() As Variant
 '    Temporary:=True property. Allows for the deletion of all user
 '    created menus or menu items on the Workbook_BeforeClose() event.
 
+```
+``` VBA
+Sub CreateMenuCommand( _
+    MenuCommandName As String, _
+    StrCommand As String, _
+    Optional Temporary As Boolean = True, _
+    Optional MenuFaceID As Long _
+)
+PARAMETERS:
+'    {PARAMETERS} =
+'    {PARAMETERS} =
+'    {PARAMETERS} =
+
+EXPLANATION:
+'    ooooooooooooooooooooooooooooooooooooooooo
+
+'    ooooooooooooooooooooooooooooooooooooooooo
+
+'    Call RemoveMenuCommand(...) to remove
+
+EXAMPLES: '(Ctrl+f to view & run)
+     Sub Try_CreateMenuCommand()
+```
+``` VBA
+Sub CreateMenuSection( _
+    MenuSectionName As String, _
+    Array_SectionMenuNames As Variant, _
+    Array_StrCommands As Variant, _
+    Optional Temporary As Boolean = True _
+)
+PARAMETERS:
+'    {PARAMETERS} =
+'    {PARAMETERS} =
+'    {PARAMETERS} =
+
+EXPLANATION:
+'    ooooooooooooooooooooooooooooooooooooooooo
+
+'    ooooooooooooooooooooooooooooooooooooooooo
+
+'    Call RemoveMenuSection(...) to remove
+
+EXAMPLES: '(Ctrl+f to view & run)
+     Sub Try_CreateMenuSection()
+```
+``` VBA
+NOTE: Popup menus are Windows only
+
+Sub CreatePopupMenu( _
+    PopupMenuName As String, _
+    Array_ItemNames As Variant, _
+    Array_StrCommands As Variant, _
+    Array_ItemFaceIDs As Variant, _
+    Optional Temporary As Boolean = True _
+)
+PARAMETERS:
+'    {PARAMETERS} =
+'    {PARAMETERS} =
+'    {PARAMETERS} =
+
+EXPLANATION:
+'    ooooooooooooooooooooooooooooooooooooooooo
+
+'    ooooooooooooooooooooooooooooooooooooooooo
+
+'    Call RemovePopupMenu(...) to remove
+
+EXAMPLES: '(Ctrl+f to view & run)
+     Sub Try_CreatePopupMenu()
+     Sub Try_CreateColorfulPopupMenu()
 ```
 ``` VBA
 Sub CreateAddInButtons( _
@@ -397,7 +470,7 @@ PARAMETERS:
 EXPLANATION:
 '    Creates a row of commands within the "Custom Toolbars" section
 '    of the Add-ins ribbon and Debug.Prints the details.
-'
+
 '    Adds each command in {ButtonStrCommands_Array}
 '    to the section with properties as specified in {ButtonTypes_Array},
 '    {MenuFaceIDs_Array} and {ButtonNames_Array}. Each {..._Array}
@@ -405,10 +478,37 @@ EXPLANATION:
 '    will be ignored if the corresponding element of {ButtonTypes_Array} is
 '    2 given that it's a caption only display type.
 
+     Call RemoveAddInSection(...) to remove
+
 EXAMPLES: '(Ctrl+f to view & run)
-     Sub Try_CustomToolbarsRow_Caption()
-     Sub Try_CustomToolbarsRow_Icons()
-     Sub Try_CustomToolbarsRow_CaptionIcon()
+     Sub Try_CreateAddInButtons_Type1()
+     Sub Try_CreateAddInButtons_Type2()
+     Sub Try_CreateAddInButtons_Type3()
+```
+``` VBA
+Function CreateButton( _
+    Optional StrCommand As String, _
+    Optional btnLabel As String = "Blank Button", _
+    Optional btnName As String, _
+    Optional ShapeType As Integer = 5, _
+    Optional btnColor As Long = 6299648, _
+    Optional Lef As Long = 10, _
+    Optional Top As Long = 10, _
+    Optional Wid As Long = 100, _
+    Optional Hei As Long = 20 _
+)
+PARAMETERS:
+'    {PARAMETERS} =
+'    {PARAMETERS} =
+'    {PARAMETERS} =
+
+EXPLANATION:
+'    ooooooooooooooooooooooooooooooooooooooooo
+
+'    ooooooooooooooooooooooooooooooooooooooooo
+
+EXAMPLES: '(Ctrl+f to view & run)
+     Sub Try_CreateButton()
 ```
 
 ##  RSCRIPT
@@ -438,10 +538,11 @@ EXAMPLES: '(Ctrl+f to view & run)
 
 ```
 ``` VBA
-  Run_RScript(ByVal RLocation As String, _
-              ByVal ScriptLocation As String, _
-              Optional ByVal Visibility As String)
-
+Sub Run_RScript( _
+    ByVal RLocation As String, _
+    ByVal ScriptLocation As String, _
+    Optional ByVal Visibility As String _
+)
 '   Uses the RScript.exe pointed to by {RLocation} to run the script
 '   found at {ScriptLocation}. Rscript.exe window displayed by default,
 '   but {Visibility}:= "VeryHidden" or "Minimized" can be used
