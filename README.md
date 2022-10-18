@@ -2,7 +2,7 @@
 #  SimplifyVBA ¬ github.com/ulchc (10-17-22)
 
 
-A collection of functions to interface R with VBA, add functionality to Excel, or improve VBA debugging and readability.
+A collection of code to interface R with VBA, make application building easier, or improve VBA readability.
 
 Prefix: ƒ— denotes a function which has a notable load time or file interactions outside ThisWorkbook. Only use these within the VBA IDE.
 
