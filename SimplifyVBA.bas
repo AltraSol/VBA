@@ -1,19 +1,28 @@
-Attribute VB_Name = "¹Git¨10·17·22¬SimplifyVBA"
+Attribute VB_Name = "SimplifyVBA"
 Option Explicit
+'
+'TODO: finish documenting (ctrl+f ooooooooooooooooooooooooooooooooooooooooo)
+'
 '===============================================================================================================================================================================================================================================================
-'#  SimplifyVBA
+'#  SimplifyVBA ¬ github.com/ulchc (10-17-22)
 '===============================================================================================================================================================================================================================================================
 '
 'A collection of functions to interface R with VBA, add functionality to Excel, or improve VBA debugging and readability.
 '
-'Note: macOS compatability is still being tested
-'
-'===============================================================================================================================================================================================================================================================
-'##  Functions
-'===============================================================================================================================================================================================================================================================
-'
 'Prefix: ƒ— denotes a function which has a notable load time or file interactions outside ThisWorkbook. Only use these within the VBA IDE.
 '
+'===============================================================================================================================================================================================================================================================
+'##  Important
+'===============================================================================================================================================================================================================================================================
+'
+'#### If you intend to use the User Interface section, the following sub must be placed within ThisWorkbook:
+'
+'----------------------------------------------------------------``` VBA
+'   Private Sub Workbook_BeforeClose(Cancel As Boolean)
+'       Call Remove_TempMenuCommands
+'       Call Remove_TempMenuCommandSections
+'   End Sub
+'----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
 Public GlobalUser As String
 '
@@ -22,88 +31,18 @@ Public GlobalUser As String
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-' Tabs_MatchingCodeName( _
-'     MatchCodeName As String, _
-'     ExcludePerfectMatch As Boolean _
-' )
+Public GlobalTempMenuCommands() As Variant
+Public GlobalTempMenuSections() As Variant
 '
-''   An array of tab names where {MatchCodeName} is within the CodeName
-''   property (useful for detecting copies of a code-named template).
-'
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
-' WorksheetExists( _
-'     aName As String, _
-'     Optional wb As Workbook _
-' )
-'
-''   True or False dependent on if tab name {aName} already exists.
+''    Tracks menu commands or menu sections that have been added using
+''    the CreateMenuCommand() or CreateMenuSection() commands with a
+''    Temporary:=True property. Allows for the deletion of all user
+''    created menus or menu items on the Workbook_BeforeClose() event.
 '
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
-'  ExtractFirstInt_RightToLeft (aVariable)
-'
-''   Returns the first integer found in a string when searcing
-''   from the right end of the string to the left.
-'
-''   ExtractFirstInt_RightToLeft("Some12Embedded345Num") = "345"
-'
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
-'  ExtractFirstInt_LeftToRight (aVariable)
-'
-''   Returns the first integer found in a string when searcing
-''   from the left end of the string to the right.
-'
-''   ExtractFirstInt_LeftToRight("Some12Embedded345Num") = "12"
-'
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
-'  Truncate_Before_Int (aString)
-'
-''   Removes characters before first integer in a sequence of characters.
-'
-''   Truncate_After_Int("Some12Embedded345Num") = "12Embedded345Num"
-'
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
-'  Truncate_After_Int (aString)
-'
-''   Removes characters after first integer in a sequence of characters.
-'
-''   Truncate_After_Int("Some12Embedded345Num") = "Some12Embedded345"
-'
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
-'  IsInt_NoTrailingSymbols (aNumeric)
-'
-''   Checks if supplied value is both numeric, and contains no numeric
-''   symbols (different from IsNumeric).
-'
-''   IsInt_NoTrailingSymbols(9999) = True
-''   IsInt_NoTrailingSymbols(9999,) = False
-'
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
-'  MyOS()
-'
-''   "Windows",  "Mac", or "Neither Windows or Mac".
-'
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
-'  Get_WindowsUsername()
-'
-''   Loops through folders to find paths matching C:\Users\...\AppData
-''   then extracts the User from correct path. Superior to reading
-''   .FullName of workbook which does not work for OneDrive.
-'
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
-'  Get_MacUsername()
-'
-''   Reads ActiveWorkbook.FullName property to get Mac user.
-'
-'----------------------------------------------------------------```
+'===============================================================================================================================================================================================================================================================
+'##  Functions
+'===============================================================================================================================================================================================================================================================
 '----------------------------------------------------------------``` VBA
 '  Get_Username()
 '
@@ -123,14 +62,59 @@ Public GlobalUser As String
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  ƒ—Delete_FileAndFolder(ByVal aFilePath As String) as Boolean
+' Get_LatestFile( _
+'     FromFolder As String, _
+'     MatchingString As String, _
+'     FileType As String _
+' )
 '
-''   Use with caution. Deletes the file supplied {aFilePath}, all
-''   files in the same folder, and the directory itself.
+''   Returns the latest file of the specified {FileType} with a name
+''   that includes {MatchingString} from the directory {FromFolder}.
 '
-''   Will exit the deletion procedure if {aFilePath} is a file
-''   within the Desktop or Documents directory, or if the directory
-''   is considered high level (it's within the user directory).
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+' ListFiles(FromFolder As String)
+'
+''   Returns an array of all file paths located in {FromFolder}
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+' CopySheets_FromFolder( _
+'     FromFolder As String, _
+'     Optional Copy_xlsx As Boolean, _
+'     Optional Copy_xlsm As Boolean, _
+'     Optional Copy_xls As Boolean, _
+'     Optional Copy_csv As Boolean _
+' )
+''   Opens all file types specified by the boolean parameters in the
+''   directory {FromFolder}, copies all sheets to ThisWorkbook, then
+''   returns an array of the new sheet names.
+'
+'    Dim CopiedSheets(): CopiedSheets() = CopySheets_FromFolder(...)
+'    Sheets(CopiedSheets(1)).Activate
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+' PasteSheetVals_FromFolder( _
+'     FromFolder As String, _
+'     Optional Copy_xlsx As Boolean, _
+'     Optional Copy_xlsm As Boolean, _
+'     Optional Copy_xls As Boolean, _
+'     Optional Copy_csv As Boolean _
+' )
+'
+''   Opens all file types specified by the boolean parameters in the
+''   directory {FromFolder}, pastes cell values from each sheet to new
+''   tabs in ThisWorkbook, then returns an array of the new sheet names.
+'
+'    Dim PastedSheets(): PastedSheets() = PasteSheetVals_FromFolder(...)
+'    Sheets(PastedSheets(1)).Activate
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+' Clipboard_IsRange()
+'
+''   Returns True if a range is currently copied.
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
@@ -156,70 +140,6 @@ Public GlobalUser As String
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-' Clipboard_IsRange()
-'
-''   Returns True if a range is currently copied.
-'
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
-' PlatformFileSep()
-'
-''   Returns "\" or "/" depending on the operating system.
-'
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
-' Get_FilesMatching( _
-'     FromFolder As String, _
-'     MatchingString As String, _
-'     FileType As String _
-' )
-'
-''   Returns an array of file paths located in {FromFolder} which have
-''   a file name containing {MatchingString} and a specific {FileType}.
-'
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
-' ListFiles(FromFolder As String)
-'
-''   Returns an array of all file paths located in {FromFolder}
-'
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
-' CopySheets_FromFolder( _
-'     FromFolder As String, _
-'     Optional Copy_xlsx As Boolean, _
-'     Optional Copy_xlsm As Boolean, _
-'     Optional Copy_xls As Boolean, _
-'     Optional Copy_csv As Boolean _
-' )
-'
-''   Opens all file types specified by the boolean parameters in the
-''   directory {FromFolder}, copies all sheets to ThisWorkbook, then
-''   returns an array of the new sheet names.
-'
-'
-'    Dim CopiedSheets(): CopiedSheets() = CopySheets_FromFolder(...)
-'    Sheets(CopiedSheets(1)).Activate
-'
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
-' PasteSheetVals_FromFolder( _
-'     FromFolder As String, _
-'     Optional Copy_xlsx As Boolean, _
-'     Optional Copy_xlsm As Boolean, _
-'     Optional Copy_xls As Boolean, _
-'     Optional Copy_csv As Boolean _
-' )
-'
-''   Opens all file types specified by the boolean parameters in the
-''   directory {FromFolder}, pastes cell values from each sheet to new
-''   tabs in ThisWorkbook, then returnsan array of the new sheet names.
-'
-'    Dim PastedSheets(): PastedSheets() = PasteSheetVals_FromFolder(...)
-'    Sheets(PastedSheets(1)).Activate
-'
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
 ' CopySheets_FromFile(FromFile As String)
 '
 ''   Opens {FromFile}, copies all sheets within it to ThisWorkbook,
@@ -240,6 +160,17 @@ Public GlobalUser As String
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
+' Get_FilesMatching( _
+'     FromFolder As String, _
+'     MatchingString As String, _
+'     FileType As String _
+' )
+'
+''   Returns an array of file paths located in {FromFolder} which have
+''   a file name containing {MatchingString} and a specific {FileType}.
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
 ' RenameSheet( _
 '     CurrentName As String, _
 '     NewName As String, _
@@ -256,6 +187,64 @@ Public GlobalUser As String
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
+' Tabs_MatchingCodeName( _
+'     MatchCodeName As String, _
+'     ExcludePerfectMatch As Boolean _
+' )
+'
+''   An array of tab names where {MatchCodeName} is within the CodeName
+''   property (useful for detecting copies of a code-named template).
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+' WorksheetExists( _
+'     aName As String, _
+'     Optional wb As Workbook _
+' )
+'
+''   True or False dependent on if tab name {aName} already exists.
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+'  ƒ—Delete_FileAndFolder(ByVal aFilePath As String) as Boolean
+'
+''   Use with caution. Deletes the file supplied {aFilePath}, all
+''   files in the same folder, and the directory itself.
+'
+''   Will exit the deletion procedure if {aFilePath} is a file
+''   within the Desktop or Documents directory, or if the directory
+''   is considered high level (it's within the user directory).
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+'  Get_WindowsUsername()
+'
+''   Loops through folders to find paths matching C:\Users\...\AppData
+''   then extracts the User from correct path. Superior to reading
+''   .FullName of workbook which does not work for OneDrive.
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+'  Get_MacUsername()
+'
+''   Reads ActiveWorkbook.FullName property to get Mac user.
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+' PlatformFileSep()
+'
+''   Returns "\" or "/" depending on the operating system.
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+'  MyOS()
+'
+''   "Windows",  "Mac", or "Neither Windows or Mac".
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+'NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
+'
 ' Replace_SpecialChars( _
 '     YourString As String, _
 '     Replacement As String, _
@@ -265,6 +254,67 @@ Public GlobalUser As String
 '
 ''   Replaces `!@#$%^&“”*(")-=+{}\/?:;'.,<> from {YourString} with
 ''   {Replacement}.
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+'NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
+'
+' Function Replace_Any( _
+'     Of_Str As String, _
+'     With_Str As String, _
+'     Within_Str As String, _
+'     Optional TrimWS As Boolean _
+' )
+'
+''   Replaces all characters {Of_Str} in the supplied {Within_Str}.
+''   Distinct from VBA's Replace() in that all matched characters
+''   are removed instead of perfect matches.
+'
+'    Debug.Print Replace_Any(" '. ", "_", "Here's an example.")
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+'  ExtractFirstInt_RightToLeft (aVariable)
+'
+''   Returns the first integer found in a string when searcing
+''   from the right end of the string to the left.
+'
+'    ExtractFirstInt_RightToLeft("Some12Embedded345Num") = "345"
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+'  ExtractFirstInt_LeftToRight (aVariable)
+'
+''   Returns the first integer found in a string when searcing
+''   from the left end of the string to the right.
+'
+'    ExtractFirstInt_LeftToRight("Some12Embedded345Num") = "12"
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+'  Truncate_Before_Int (aString)
+'
+''   Removes characters before first integer in a sequence of characters.
+'
+'    Truncate_After_Int("Some12Embedded345Num") = "12Embedded345Num"
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+'  Truncate_After_Int (aString)
+'
+''   Removes characters after first integer in a sequence of characters.
+'
+'    Truncate_After_Int("Some12Embedded345Num") = "Some12Embedded345"
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+'  IsInt_NoTrailingSymbols (aNumeric)
+'
+''   Checks if supplied value is both numeric, and contains no numeric
+''   symbols (different from IsNumeric).
+'
+''   IsInt_NoTrailingSymbols(9999) = True
+''   IsInt_NoTrailingSymbols(9999,) = False
 '
 '----------------------------------------------------------------```
 '===============================================================================================================================================================================================================================================================
@@ -290,6 +340,31 @@ Public GlobalUser As String
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
+' SaveToDownloads( _
+'    SaveTabNamed As String, _
+'    AsFileNamed As String, _
+'    OpenAfterSave As Boolean, _
+'    Optional SaveAsType As String = "xlsx" _
+' )
+'
+''    {SaveTabNamed} is the ActiveSheet.Name property, {AsFileNamed}
+''    is a plain string which is automatically combined with the local
+''    download folder to create the full path to save to.
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+' SaveToDownloads_Multiple( _
+'    SaveTabsNamed_Array As Variant, _
+'    AsFileNamed As String, _
+'    OpenAfterSave As Boolean, _
+'    Optional SaveAsType As String = "xlsx" _
+' )
+'
+''    Operates the same as SaveToDownloads() but takes an array of
+''    tab names.
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
 ' MergeAndCombine(MergeRange As Range, Optional SepValsByNewLine = True)
 '
 ''    Concatenates each Cell.Value in a range & merges range as opposed
@@ -297,7 +372,7 @@ Public GlobalUser As String
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-' AutoAdjustZoom(rngBegin, rngEnd)
+' AutoAdjustZoom(rngBegin As Range, rngEnd As Range)
 '
 ''   Adjusts user view to the width of rngBegin to rngEnd
 '
@@ -310,32 +385,31 @@ Public GlobalUser As String
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  Sub InsertSlicer( _
-'      NamedRange As String, _
-'      NumCols As Integer, _
-'      aHeight As Double, _
-'      aWidth As Double _
-'  )
-'
+' InsertSlicer( _
+'     NamedRange As String, _
+'     NumCols As Integer, _
+'     aHeight As Double, _
+'     aWidth As Double _
+' )
 ''   Creates a slicer for the active sheet named range {NamedRange}
 ''   with {NumCols} buttons per slicer row, and with dimensions
 ''   {aHeight} by {aWidth}
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  AlterSlicerColumns(SlicerName As String, NumCols)
+' AlterSlicerColumns(SlicerName As String, NumCols)
 '
 ''   Loops through workbook to find {SlicerName} and sets the number
 ''   of buttons per row to {NumCols}
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  Sub MoveSlicer( _
-'      SlicerSelection, _
-'      rngPaste As Range, _
-'      leftOffset, _
-'      IncTop _
-'  )
+' MoveSlicer( _
+'     SlicerSelection, _
+'     rngPaste As Range, _
+'     leftOffset, _
+'     IncTop _
+' )
 ''   Takes Selection as {SlicerSelection}, cuts & pastes it to a rough
 ''   location {rngPaste} to be incrementally adjusted from paste
 ''   location by {leftOffset} and {IncTop}
@@ -363,31 +437,28 @@ Public GlobalUser As String
 '===============================================================================================================================================================================================================================================================
 '##  User Interface Additions
 '===============================================================================================================================================================================================================================================================
-'
-'#### The following sub must be placed within ThisWorkbook:
-'
-'     Private Sub Workbook_BeforeClose(Cancel As Boolean)
-'         Call Remove_TempMenuCommands
-'         Call Remove_TempMenuCommandsections
-'     End Sub
-'
 '----------------------------------------------------------------``` VBA
-Public GlobalTempMenuCommands() As Variant
-Public GlobalTempMenuSections() As Variant
-'
-''    Tracks menu commands or menu sections that have been added using
-''    the CreateMenuCommand() or CreateMenuSection() commands with a
-''    Temporary:=True property. Allows for the deletion of all user
-''    created menus or menu items on the Workbook_BeforeClose() event.
-'
+' ConvertStrCommand( _
+'     CommandString As String, _
+'     Optional Verbose As Boolean = True _
+' )
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'Sub CreateMenuCommand( _
+' ChangeMenuVisibility( _
+'     MenuItems_Array As Variant, _
+'     VisibleProperty As Boolean _
+' )
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+' ResetCellMenu
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+' CreateMenuCommand( _
 '    MenuCommandName As String, _
 '    StrCommand As String, _
 '    Optional Temporary As Boolean = True, _
 '    Optional MenuFaceID As Long _
-')
+' )
 'PARAMETERS:
 ''    {PARAMETERS} =
 ''    {PARAMETERS} =
@@ -404,12 +475,12 @@ Public GlobalTempMenuSections() As Variant
 '     Sub Try_CreateMenuCommand
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'Sub CreateMenuSection( _
+' CreateMenuSection( _
 '    MenuSectionName As String, _
 '    Array_SectionMenuNames As Variant, _
 '    Array_StrCommands As Variant, _
 '    Optional Temporary As Boolean = True _
-')
+' )
 'PARAMETERS:
 ''    {PARAMETERS} =
 ''    {PARAMETERS} =
@@ -428,13 +499,13 @@ Public GlobalTempMenuSections() As Variant
 '----------------------------------------------------------------``` VBA
 'NOTE: Popup menus are Windows only
 '
-'Sub CreatePopupMenu( _
+' CreatePopupMenu( _
 '    PopupMenuName As String, _
 '    Array_ItemNames As Variant, _
 '    Array_StrCommands As Variant, _
 '    Array_ItemFaceIDs As Variant, _
 '    Optional Temporary As Boolean = True _
-')
+' )
 'PARAMETERS:
 ''    {PARAMETERS} =
 ''    {PARAMETERS} =
@@ -449,17 +520,17 @@ Public GlobalTempMenuSections() As Variant
 '
 'EXAMPLES: '(Ctrl+f to view & run)
 '     Sub Try_CreatePopupMenu
-'     Sub Try_CreateColorfulPopupMenu
+'     Sub Try_CreatePopupMenuColorful
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'Sub CreateAddInButtons( _
+' CreateAddInButtons( _
 '    ButtonSectionName As String, _
 '    ButtonNames_Array As Variant, _
 '    ButtonTypes_Array As Variant, _
 '    ButtonStrCommands_Array As Variant, _
 '    Optional MenuFaceIDs_Array As Variant, _
 '    Optional Temporary As Boolean = True _
-')
+' )
 '
 'PARAMETERS:
 ''    {ButtonSectionName} = Name of the row added to the Add-ins ribbon (visible on hover).
@@ -488,7 +559,7 @@ Public GlobalTempMenuSections() As Variant
 '     Sub Try_CreateAddInButtons_Type3
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'Function CreateButton( _
+' CreateButtonShape( _
 '    Optional StrCommand As String, _
 '    Optional btnLabel As String = "Blank Button", _
 '    Optional btnName As String, _
@@ -498,7 +569,7 @@ Public GlobalTempMenuSections() As Variant
 '    Optional Top As Long = 10, _
 '    Optional Wid As Long = 100, _
 '    Optional Hei As Long = 20 _
-')
+' )
 'PARAMETERS:
 ''    {PARAMETERS} =
 ''    {PARAMETERS} =
@@ -510,13 +581,15 @@ Public GlobalTempMenuSections() As Variant
 ''    ooooooooooooooooooooooooooooooooooooooooo
 '
 'EXAMPLES: '(Ctrl+f to view & run)
-'     Sub Try_CreateButton
+'     Sub Try_CreateButtonShape
 '----------------------------------------------------------------```
 '===============================================================================================================================================================================================================================================================
 '##  RScript
 '===============================================================================================================================================================================================================================================================
 '
 '### TODO: Remove notification of deletion
+'
+'    All RScript functions are currently Windows OS only.
 '
 '----------------------------------------------------------------``` VBA
 '  QuickRun_RScript(ByVal ScriptContents As String)
@@ -540,14 +613,15 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'Sub Run_RScript( _
-'    ByVal RLocation As String, _
-'    ByVal ScriptLocation As String, _
-'    Optional ByVal Visibility As String _
-')
+' Run_RScript( _
+'     RLocation As String, _
+'     ScriptLocation As String, _
+'     Optional Visibility As String, _
+'     Optional OnErrorEnd As Boolean = True _
+' )
 ''   Uses the RScript.exe pointed to by {RLocation} to run the script
 ''   found at {ScriptLocation}. Rscript.exe window displayed by default,
-''   but {Visibility}:= "VeryHidden" or "Minimized" can be used
+''   but {Visibility}:= "VeryHidden" or "Minimized" can be used.
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
@@ -1549,7 +1623,7 @@ Sub SaveToDownloads_Multiple( _
     SaveTabsNamed_Array As Variant, _
     AsFileNamed As String, _
     OpenAfterSave As Boolean, _
-    SaveAsType As String _
+    Optional SaveAsType As String = "xlsx" _
 )
 
 Dim IdealFileName As String, _
@@ -1557,8 +1631,6 @@ Dim IdealFileName As String, _
     VisibleProp, _
     wbNew As Workbook, _
     i As Integer, j As Integer
-    
-If SaveAsType = vbNullString Then SaveAsType = "xlsx"
 
 IdealFileName = Get_DownloadsPath() & PlatformFileSep() & AsFileNamed & "." & SaveAsType
 TryFileName = IdealFileName
@@ -1614,7 +1686,7 @@ Sub SaveToDownloads( _
     SaveTabNamed As String, _
     AsFileNamed As String, _
     OpenAfterSave As Boolean, _
-    SaveAsType As String _
+    Optional SaveAsType As String = "xlsx" _
 )
 
 Dim IdealFileName As String, _
@@ -1623,7 +1695,6 @@ Dim IdealFileName As String, _
     i As Integer
     
     Application.StatusBar = "Copying sheet " & Chr(34) & SaveTabNamed & Chr(34) & " to downloads folder..."
-    If SaveAsType = vbNullString Then SaveAsType = "xlsx"
     
     VisibleProp = ThisWorkbook.Sheets(SaveTabNamed).Visible
     
@@ -2152,7 +2223,7 @@ Exit Sub 'Comment this and replay the sub to remove the example menu
 Call RemovePopupMenu(MyMenuName)
 End Sub
 
-Sub Try_CreateColorfulPopupMenu()
+Sub Try_CreatePopupMenuColorful()
 
 'Open the immediate window to see a print out of the events
 
@@ -2402,14 +2473,14 @@ End Function
 '## CREATE BUTTON SHAPE
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Sub Try_CreateButton()
+Sub Try_CreateButtonShape()
 Range("A1").Select
 
 MsgBox "Creating a [Blank Button] shape that does nothing:", vbInformation, "[Blank Button]"
-    Call CreateButton
+    Call CreateButtonShape
 
 MsgBox "Creating a button, calling it [Button One], and assigning some properties", vbInformation, "[Button One]"
-    Call CreateButton( _
+    Call CreateButtonShape( _
         btnLabel:="Button One", _
         StrCommand:="WriteLines{'This is a message'}", _
         btnColor:=5242976, _
@@ -2419,7 +2490,7 @@ MsgBox "Creating a button, calling it [Button One], and assigning some propertie
 MsgBox "Creating a button, calling it [Button Two], assigning some properties, and using it in a sub...", vbInformation, "[Button Two]"
     Dim Button As Object
     Set Button = _
-        CreateButton( _
+        CreateButtonShape( _
             btnLabel:="Button Two", _
             btnName:="btnTwo", _
             StrCommand:="WriteLines{MyText:='This is a message', Repeat:=4}", _
@@ -2442,7 +2513,7 @@ MsgBox "Changing [Button Two]'s text:", vbInformation, "Modifying Button in a Su
 
 End Sub
 
-Function CreateButton( _
+Function CreateButtonShape( _
     Optional StrCommand As String, _
     Optional btnLabel As String = "Blank Button", _
     Optional btnName As String, _
@@ -2493,7 +2564,7 @@ Dim btn As Object, _
             .ParagraphFormat.Alignment = 2
         End With
 
-        Set CreateButton = btn
+        Set CreateButtonShape = btn
 
 Set btn = Nothing
 Set btnRange = Nothing
@@ -2517,6 +2588,18 @@ End Function
 '===============================================================================================================================================================================================================================================================
 '# RSCRIPT
 '===============================================================================================================================================================================================================================================================
+
+Sub CheckSystemInfo()
+Print_Pad
+               Print_Named MyOS(), "MyOS()"
+    Print_Named PlatformFileSep(), "PlatformFileSep()"
+       Print_Named Get_Username(), "Get_Username()"
+    Print_Named Get_DesktopPath(), "Get_DesktopPath()"
+  Print_Named Get_DownloadsPath(), "Get_DownloadsPath()"
+        Print_Named Get_RFolder(), "Get_RFolder()"
+       Print_Named Get_RExePath(), "Get_RExePath()"
+Print_Pad
+End Sub
 
 Sub Test_QuickRun_RScript()
 
@@ -2614,24 +2697,29 @@ Dim TempFolder As String
             
             WriteTemp_RScript = TempFolder & "\" & "Temp.R"
 
+Set Fileout = Nothing
+Set FSO = Nothing
 End Function
 
-Sub FindAndRun_RScript(ByVal ScriptLocation)
+Sub FindAndRun_RScript(ScriptLocation)
 
 If TypeName(ScriptLocation) = "Range" Then
     ScriptLocation = ScriptLocation.Cells(1).Value
 End If
 
-Call Run_RScript(RLocation:=Get_RExePath, _
-                 ScriptLocation:=ScriptLocation, _
-                 Visibility:="Visible")
+Call Run_RScript( _
+    RLocation:=Get_RExePath, _
+    ScriptLocation:=ScriptLocation, _
+    Visibility:="Visible" _
+)
                  
 End Sub
 
 Sub Run_RScript( _
-    ByVal RLocation As String, _
+    RLocation As String, _
     ByVal ScriptLocation As String, _
-    Optional ByVal Visibility As String _
+    Optional Visibility As String, _
+    Optional OnErrorEnd As Boolean = True _
 )
 
 Dim WaitTillComplete As Boolean: WaitTillComplete = True
@@ -2649,15 +2737,21 @@ Dim oShell As Object, _
         Style = 2
     End If
     
-        Set oShell = CreateObject("WScript.Shell")
+Set oShell = CreateObject("WScript.Shell")
         
-        eRExe = Chr(34) & Replace(RLocation, "\", "\\") & Chr(34)
-        eRScript = Chr(34) & Replace(ScriptLocation, "\", "\\") & Chr(34)
+    eRExe = Chr(34) & Replace(RLocation, "\", "\\") & Chr(34)
+    eRScript = Chr(34) & Replace(ScriptLocation, "\", "\\") & Chr(34)
+    RExe_RScript = eRExe & eRScript
+    ErrorCode = oShell.Run(RExe_RScript, Style, WaitTillComplete)
 
-            RExe_RScript = eRExe & eRScript
-            
-                ErrorCode = oShell.Run(RExe_RScript, Style, WaitTillComplete)
-
+        If OnErrorEnd = True And ErrorCode <> 0 Then
+            MsgBox "Error attempting to run script. Ensure that any potential exceptions are wrapped in try().", vbInformation, "Run Failure"
+            End
+        End If
+        
+        Call Print_Named(ErrorCode, "ErrorCode")
+        
+Set oShell = Nothing
 End Sub
 
 Function Get_RExePath() As String
@@ -2705,7 +2799,7 @@ End Function
 
 Function Get_RFolder() As String
 
-Dim OS As String: OS = MyOS
+Dim OS As String: OS = MyOS()
 
     If OS = "Windows" Then
         Get_RFolder = "C:\Program Files\R"
