@@ -4,16 +4,13 @@
 
 A collection of functions to interface R with VBA, add functionality to Excel, or improve VBA debugging and readability.
 
-Download VBA-All.xlsm for a clearer picture of how the code below works.
-
 Note: macOS compatability is still being tested
 
 
 ##  Functions
 
 
-### Prefix: ƒ— denotes a function which has a notable load time or
-### file interactions outside ThisWorkbook. Only use within VBA.
+Prefix: ƒ— denotes a function which has a notable load time or file interactions outside ThisWorkbook. Only use within VBA.
 
 ``` VBA
 Public GlobalUser As String
@@ -28,8 +25,6 @@ Public GlobalUser As String
      ExcludePerfectMatch As Boolean _
  )
 
-'   RETURNS: Variant()
-
 '   An array of tab names where {MatchCodeName} is within the CodeName
 '   property (useful for detecting copies of a code-named template).
 
@@ -40,15 +35,11 @@ Public GlobalUser As String
      Optional wb As Workbook _
  )
 
-'   RETURNS: Boolean
-
 '   True or False dependent on if tab name {aName} already exists.
 
 ```
 ``` VBA
   ExtractFirstInt_RightToLeft (aVariable)
-
-'   RETURNS: String
 
 '   Returns the first integer found in a string when searcing
 '   from the right end of the string to the left.
@@ -59,8 +50,6 @@ Public GlobalUser As String
 ``` VBA
   ExtractFirstInt_LeftToRight (aVariable)
 
-'   RETURNS: String
-
 '   Returns the first integer found in a string when searcing
 '   from the left end of the string to the right.
 
@@ -70,8 +59,6 @@ Public GlobalUser As String
 ``` VBA
   Truncate_Before_Int (aString)
 
-'   RETURNS: String
-
 '   Removes characters before first integer in a sequence of characters.
 
 '   Truncate_After_Int("Some12Embedded345Num") = "12Embedded345Num"
@@ -80,8 +67,6 @@ Public GlobalUser As String
 ``` VBA
   Truncate_After_Int (aString)
 
-'   RETURNS: String
-
 '   Removes characters after first integer in a sequence of characters.
 
 '   Truncate_After_Int("Some12Embedded345Num") = "Some12Embedded345"
@@ -89,8 +74,6 @@ Public GlobalUser As String
 ```
 ``` VBA
   IsInt_NoTrailingSymbols (aNumeric)
-
-'   RETURNS: Boolean
 
 '   Checks if supplied value is both numeric, and contains no numeric
 '   symbols (different from IsNumeric).
@@ -102,15 +85,11 @@ Public GlobalUser As String
 ``` VBA
   MyOS()
 
-'   RETURNS: String
-
 '   "Windows",  "Mac", or "Neither Windows or Mac".
 
 ```
 ``` VBA
   Get_WindowsUsername()
-
-'   RETURNS: String
 
 '   Loops through folders to find paths matching C:\Users\...\AppData
 '   then extracts the User from correct path. Superior to reading
@@ -120,15 +99,11 @@ Public GlobalUser As String
 ``` VBA
   Get_MacUsername()
 
-'   RETURNS: String
-
 '   Reads ActiveWorkbook.FullName property to get Mac user.
 
 ```
 ``` VBA
   Get_Username()
-
-'   RETURNS: String
 
 '   Returns username regardless of Windows or Mac OS.
 
@@ -136,23 +111,17 @@ Public GlobalUser As String
 ``` VBA
   Get_DesktopPath()
 
-'   RETURNS: String
-
 '   Returns Mac or Windows desktop directory (even if on OneDrive).
 
 ```
 ``` VBA
   Get_DownloadsPath()
 
-'   RETURNS: String
-
 '   Returns Mac or Windows downloads directory (even if on OneDrive).
 
 ```
 ``` VBA
-  ƒ—Delete_FileAndFolder(ByVal aFilePath As String)
-
-'   RETURNS: Boolean
+  ƒ—Delete_FileAndFolder(ByVal aFilePath As String) as Boolean
 
 '   Use with caution. Deletes the file supplied {aFilePath}, all
 '   files in the same folder, and the directory itself.
@@ -165,8 +134,6 @@ Public GlobalUser As String
 ``` VBA
   Clipboard_Load(ByVal aString As String)
 
-'   RETURNS: Boolean
-
 '   Stores {aString} in clipboard.
 
 ```
@@ -176,15 +143,11 @@ Public GlobalUser As String
      Optional Sep As String = ", " _
  )
 
-'   RETURNS: String
-
 '   Returns text from the copied object (clipboard text or range).
 
 ```
 ``` VBA
   ƒ—Get_CopiedRangeVals()
-
-'   RETURNS: String
 
 '   If range copied, checks each Cell.Value in the range and
 '   returns an array of each non-blank value.
@@ -193,15 +156,11 @@ Public GlobalUser As String
 ``` VBA
  Clipboard_IsRange()
 
-'   RETURNS: Boolean
-
 '   Returns True if a range is currently copied.
 
 ```
 ``` VBA
  PlatformFileSep()
-
-'   RETURNS: String
 
 '   Returns "\" or "/" depending on the operating system.
 
@@ -213,16 +172,12 @@ Public GlobalUser As String
      FileType As String _
  )
 
-'   RETURNS: Variant()
-
 '   Returns an array of file paths located in {FromFolder} which have
 '   a file name containing {MatchingString} and a specific {FileType}.
 
 ```
 ``` VBA
  ListFiles(FromFolder As String)
-
-'   RETURNS: Variant()
 
 '   Returns an array of all file paths located in {FromFolder}
 
@@ -236,14 +191,13 @@ Public GlobalUser As String
      Optional Copy_csv As Boolean _
  )
 
-'   RETURNS: Variant()
-
 '   Opens all file types specified by the boolean parameters in the
 '   directory {FromFolder}, copies all sheets to ThisWorkbook, then
 '   returns an array of the new sheet names.
 
-'   Dim CopiedSheets(): CopiedSheets() = CopySheets_FromFolder(...)
-'   Sheets(CopiedSheets(1)).Activate
+
+    Dim CopiedSheets(): CopiedSheets() = CopySheets_FromFolder(...)
+    Sheets(CopiedSheets(1)).Activate
 
 ```
 ``` VBA
@@ -255,38 +209,32 @@ Public GlobalUser As String
      Optional Copy_csv As Boolean _
  )
 
-'   RETURNS: Variant()
-
 '   Opens all file types specified by the boolean parameters in the
 '   directory {FromFolder}, pastes cell values from each sheet to new
 '   tabs in ThisWorkbook, then returnsan array of the new sheet names.
 
-'   Dim PastedSheets(): PastedSheets() = PasteSheetVals_FromFolder(...)
-'   Sheets(PastedSheets(1)).Activate
+    Dim PastedSheets(): PastedSheets() = PasteSheetVals_FromFolder(...)
+    Sheets(PastedSheets(1)).Activate
 
 ```
 ``` VBA
  CopySheets_FromFile(FromFile As String)
 
-'   RETURNS: Variant()
-
 '   Opens {FromFile}, copies all sheets within it to ThisWorkbook,
 '   then returns an array of the new sheet names.
 
-'   Dim CopiedSheets(): CopiedSheets() = CopySheets_FromFile(...)
-'   Sheets(CopiedSheets(1)).Activate
+    Dim CopiedSheets(): CopiedSheets() = CopySheets_FromFile(...)
+    Sheets(CopiedSheets(1)).Activate
 
 ```
 ``` VBA
  PasteSheetVals_FromFile(FromFile As String)
 
-'   RETURNS: Variant()
-
 '   Opens {FromFile}, pastes cell values from all sheets within it
 '   to ThisWorkbook, then returns an array of the new sheet names.
 
-'   Dim PastedSheets(): PastedSheets() = PasteSheetVals_FromFile(...)
-'   Sheets(PastedSheets(1)).Activate
+    Dim PastedSheets(): PastedSheets() = PasteSheetVals_FromFile(...)
+    Sheets(PastedSheets(1)).Activate
 
 ```
 ``` VBA
@@ -295,8 +243,6 @@ Public GlobalUser As String
      NewName As String, _
      OverrideExisting As Boolean _
  )
-
-'   RETURNS: String
 
 '   Changes Sheets({CurrentName}).Name to {NewName} if {NewName}
 '   is not already in use, otherwise, a bracketed number (n) is added
@@ -315,8 +261,6 @@ Public GlobalUser As String
      Optional TrimWS As Boolean _
  )
 
-'   RETURNS: String
-
 '   Replaces `!@#$%^&“”*(")-=+{}\/?:;'.,<> from {YourString} with
 '   {Replacement}.
 
@@ -330,7 +274,7 @@ Public GlobalUser As String
 '    Simplifies the addition of a value to a one dimensional array by
 '    handling the initalization & resizing of an array in VBA
 
-'    Call ReDim_Add(aArr(), aVal) -> last element of aArr() now aVal
+     Call ReDim_Add(aArr(), aVal) '-> last element of aArr() now aVal
 
 ```
 ``` VBA
@@ -340,12 +284,11 @@ Public GlobalUser As String
 '    dimensional array by handing the resizing of the array as well
 '    as the removal of the 0th value
 
-'    Call ReDim_Rem(aArr()) -> last element of aArr() has been removed
+     Call ReDim_Rem(aArr()) '-> last element of aArr() has been removed
 
 ```
 ``` VBA
- MergeAndCombine(MergeRange As Range, _
-                 Optional SepValsByNewLine = True)
+ MergeAndCombine(MergeRange As Range, Optional SepValsByNewLine = True)
 
 '    Concatenates each Cell.Value in a range & merges range as opposed
 '    to Merge & Center which only keeps a single value
@@ -402,15 +345,11 @@ Public GlobalUser As String
 ``` VBA
   Print_Pad()
 
-'   RETURNS: [Nothing]
-
 '   Uses Debug.Print to print a timestamped seperator of "======"
 
 ```
 ``` VBA
   Print_Named(Something, Optional Label)
-
-'   RETURNS: [Nothing]
 
 '   Uses Debug.Print to add a space between each {Something} printed,
 '   labels each {Something} if {Label} supplied.
@@ -420,7 +359,7 @@ Public GlobalUser As String
 ##  User Interface Additions
 
 
-### The following sub must be placed within ThisWorkbook:
+#### The following sub must be placed within ThisWorkbook:
 
      Private Sub Workbook_BeforeClose(Cancel As Boolean)
          Call Remove_TempMenuCommands
@@ -431,9 +370,10 @@ Public GlobalUser As String
 Public GlobalTempMenuCommands() As Variant
 Public GlobalTempMenuSections() As Variant
 
-'    Tracks which menus have been added using Temporary:=True with
-'    either the CreateMenuCommand() or CreateMenuSection() commands so
-'    that they can be removed with the Workbook_BeforeClose() event.
+'    Tracks menu commands or menu sections that have been added using
+'    the CreateMenuCommand() or CreateMenuSection() commands with a
+'    Temporary:=True property. Allows for the deletion of all user
+'    created menus or menu items on the Workbook_BeforeClose() event.
 
 ```
 ``` VBA
@@ -446,7 +386,7 @@ Sub CreateAddInButtons( _
     Optional Temporary As Boolean = True _
 )
 
-'    PARAMETERS:
+PARAMETERS:
 '    {ButtonSectionName} = Name of the row added to the Add-ins ribbon (visible on hover).
 '    {ButtonNames_Array} = Array of names for each command (visible on hover).
 '    {ButtonTypes_Array} = Array of types (1, 2 or 3) for the display of command buttons.
@@ -465,7 +405,7 @@ EXPLANATION:
 '    will be ignored if the corresponding element of {ButtonTypes_Array} is
 '    2 given that it's a caption only display type.
 
-'    EXAMPLES (Ctrl+f and run):
+EXAMPLES: '(Ctrl+f to view & run)
      Sub Try_CustomToolbarsRow_Caption()
      Sub Try_CustomToolbarsRow_Icons()
      Sub Try_CustomToolbarsRow_CaptionIcon()
