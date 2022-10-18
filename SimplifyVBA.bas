@@ -1554,35 +1554,68 @@ Dim ThisOS As String
     End If
 
 End Function
-
 Function Get_WindowsUsername()
+    Get_WindowsUsername = "Temp"
+End Function
+Sub sGet_WindowsUsername()
 
-If GlobalUser <> vbNullString Then
-    Get_WindowsUsername = GlobalUser
-    Exit Function
-End If
+'If GlobalUser <> vbNullString Then
+'    Get_WindowsUsername = GlobalUser
+'    Exit Sub
+'End If
 
-Dim UserDirectory As String, _
-    UserFolders As Variant, _
+Dim UserDirectory As String: UserDirectory = "C:\Users\"
+Dim UserFolders As Variant: UserFolders = ListFolders(UserDirectory)
+Dim FileSep As String: FileSep = PlatformFileSep()
+
+Dim FilteredFolders As Variant, _
+    UserFolder As Variant, _
+    HasDownloadsDir As Variant, _
     FilterTerms As Variant, _
-    Term As Variant, _
-    FilteredFolders As Variant
+    Term As Variant
 
-    UserDirectory = "C:\Users\"
-    UserFolders = ListFolders(UserDirectory)
+    'Remove {C:\Users\..} and {C:\Users\.} from UserFolders
+    FilteredFolders = Filter(UserFolders, "\.", False)
+    
+    'Remove {C:\Users\Public} from FilteredFolders
+    FilteredFolders = Filter(FilteredFolders, "Public", False)
+    
+    'Look into each {UserFolder} within FilteredFolders
+    For Each UserFolder In FilteredFolders
+            
+        On Error Resume Next 'Ignore inaccessible folders, which would not be the user
+        
+        'Look into the {UserFolder} for the Downloads directory
+        HasDownloadsDir = Filter(ListFolders(UserFolder & FileSep), "Downloads", True)(0) <> vbNullString
+        
+        On Error GoTo -1
+        
+        'If the {UserFolder} does not have a downloads directory...
+        If HasDownloadsDir <> True Then
+        
+            '...it would not contain the username
+            FilteredFolders = Filter(FilteredFolders, UserFolder, False)
+        End If
+        
+    Next UserFolder
+        
+        
+        For Each UserFolder In FilteredFolders
+            Print_Named CStr(UserFolder), "UserFolder"
+        Next UserFolder
         
         'Non-username folders contained within the UserDirectory
         FilterTerms = Array(".", "Public", "AppData", "Default", "All Users")
-        FilteredFolders = UserFolders 'Initalize
+      '  FilteredFolders = UserFolders 'Initalize
         
         For Each Term In FilterTerms
-            FilteredFolders = Filter(FilteredFolders, CStr(Term), False)
+      '      FilteredFolders = Filter(FilteredFolders, CStr(Term), False)
         Next Term
         
-        GlobalUser = Replace(FilteredFolders(0), "C:\Users\", vbNullString)
-        Get_WindowsUsername = GlobalUser
+      '  GlobalUser = Replace(FilteredFolders(0), "C:\Users\", vbNullString)
+        'Get_WindowsUsername = GlobalUser
         
-End Function
+End Sub
 
 Function Get_WindowsUsernameOld()
 
