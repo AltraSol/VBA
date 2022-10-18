@@ -81,11 +81,9 @@ Public GlobalTempMenuSections() As Variant
      Optional Copy_xls As Boolean, _
      Optional Copy_csv As Boolean _
  )
-
 '   Opens all file types specified by the boolean parameters in the
 '   directory {FromFolder}, copies all sheets to ThisWorkbook, then
 '   returns an array of the new sheet names.
-
 
     Dim CopiedSheets(): CopiedSheets() = CopySheets_FromFolder(...)
     Sheets(CopiedSheets(1)).Activate
@@ -102,7 +100,7 @@ Public GlobalTempMenuSections() As Variant
 
 '   Opens all file types specified by the boolean parameters in the
 '   directory {FromFolder}, pastes cell values from each sheet to new
-'   tabs in ThisWorkbook, then returnsan array of the new sheet names.
+'   tabs in ThisWorkbook, then returns an array of the new sheet names.
 
     Dim PastedSheets(): PastedSheets() = PasteSheetVals_FromFolder(...)
     Sheets(PastedSheets(1)).Activate
@@ -268,6 +266,7 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   are removed instead of perfect matches.
 
     Debug.Print Replace_Any(" '. ", "_", "Here's an example.")
+
 ```
 ``` VBA
   ExtractFirstInt_RightToLeft (aVariable)
@@ -275,7 +274,7 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   Returns the first integer found in a string when searcing
 '   from the right end of the string to the left.
 
-'   ExtractFirstInt_RightToLeft("Some12Embedded345Num") = "345"
+    ExtractFirstInt_RightToLeft("Some12Embedded345Num") = "345"
 
 ```
 ``` VBA
@@ -284,7 +283,7 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   Returns the first integer found in a string when searcing
 '   from the left end of the string to the right.
 
-'   ExtractFirstInt_LeftToRight("Some12Embedded345Num") = "12"
+    ExtractFirstInt_LeftToRight("Some12Embedded345Num") = "12"
 
 ```
 ``` VBA
@@ -292,7 +291,7 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
 '   Removes characters before first integer in a sequence of characters.
 
-'   Truncate_After_Int("Some12Embedded345Num") = "12Embedded345Num"
+    Truncate_After_Int("Some12Embedded345Num") = "12Embedded345Num"
 
 ```
 ``` VBA
@@ -300,7 +299,7 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
 '   Removes characters after first integer in a sequence of characters.
 
-'   Truncate_After_Int("Some12Embedded345Num") = "Some12Embedded345"
+    Truncate_After_Int("Some12Embedded345Num") = "Some12Embedded345"
 
 ```
 ``` VBA
@@ -368,7 +367,7 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
 ```
 ``` VBA
- AutoAdjustZoom(rngBegin, rngEnd)
+ AutoAdjustZoom(rngBegin As Range, rngEnd As Range)
 
 '   Adjusts user view to the width of rngBegin to rngEnd
 
@@ -381,7 +380,7 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
 ```
 ``` VBA
- Sub InsertSlicer( _
+ InsertSlicer( _
      NamedRange As String, _
      NumCols As Integer, _
      aHeight As Double, _
@@ -400,7 +399,7 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
 ```
 ``` VBA
- Sub MoveSlicer( _
+ MoveSlicer( _
      SlicerSelection, _
      rngPaste As Range, _
      leftOffset, _
@@ -449,12 +448,12 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
  ResetCellMenu
 ```
 ``` VBA
-Sub CreateMenuCommand( _
+ CreateMenuCommand( _
     MenuCommandName As String, _
     StrCommand As String, _
     Optional Temporary As Boolean = True, _
     Optional MenuFaceID As Long _
-)
+ )
 PARAMETERS:
 '    {PARAMETERS} =
 '    {PARAMETERS} =
@@ -471,12 +470,12 @@ EXAMPLES: '(Ctrl+f to view & run)
      Sub Try_CreateMenuCommand()
 ```
 ``` VBA
-Sub CreateMenuSection( _
+ CreateMenuSection( _
     MenuSectionName As String, _
     Array_SectionMenuNames As Variant, _
     Array_StrCommands As Variant, _
     Optional Temporary As Boolean = True _
-)
+ )
 PARAMETERS:
 '    {PARAMETERS} =
 '    {PARAMETERS} =
@@ -495,13 +494,13 @@ EXAMPLES: '(Ctrl+f to view & run)
 ``` VBA
 NOTE: Popup menus are Windows only
 
-Sub CreatePopupMenu( _
+ CreatePopupMenu( _
     PopupMenuName As String, _
     Array_ItemNames As Variant, _
     Array_StrCommands As Variant, _
     Array_ItemFaceIDs As Variant, _
     Optional Temporary As Boolean = True _
-)
+ )
 PARAMETERS:
 '    {PARAMETERS} =
 '    {PARAMETERS} =
@@ -516,17 +515,17 @@ EXPLANATION:
 
 EXAMPLES: '(Ctrl+f to view & run)
      Sub Try_CreatePopupMenu()
-     Sub Try_CreateColorfulPopupMenu()
+     Sub Try_CreatePopupMenuColorful()
 ```
 ``` VBA
-Sub CreateAddInButtons( _
+ CreateAddInButtons( _
     ButtonSectionName As String, _
     ButtonNames_Array As Variant, _
     ButtonTypes_Array As Variant, _
     ButtonStrCommands_Array As Variant, _
     Optional MenuFaceIDs_Array As Variant, _
     Optional Temporary As Boolean = True _
-)
+ )
 
 PARAMETERS:
 '    {ButtonSectionName} = Name of the row added to the Add-ins ribbon (visible on hover).
@@ -555,7 +554,7 @@ EXAMPLES: '(Ctrl+f to view & run)
      Sub Try_CreateAddInButtons_Type3()
 ```
 ``` VBA
-Function CreateButton( _
+ CreateButtonShape( _
     Optional StrCommand As String, _
     Optional btnLabel As String = "Blank Button", _
     Optional btnName As String, _
@@ -565,7 +564,7 @@ Function CreateButton( _
     Optional Top As Long = 10, _
     Optional Wid As Long = 100, _
     Optional Hei As Long = 20 _
-)
+ )
 PARAMETERS:
 '    {PARAMETERS} =
 '    {PARAMETERS} =
@@ -577,13 +576,15 @@ EXPLANATION:
 '    ooooooooooooooooooooooooooooooooooooooooo
 
 EXAMPLES: '(Ctrl+f to view & run)
-     Sub Try_CreateButton()
+     Sub Try_CreateButtonShape()
 ```
 
 ##  RScript
 
 
 ### TODO: Remove notification of deletion
+
+    All RScript functions are currently Windows OS only.
 
 ``` VBA
   QuickRun_RScript(ByVal ScriptContents As String)
@@ -607,14 +608,15 @@ EXAMPLES: '(Ctrl+f to view & run)
 
 ```
 ``` VBA
-Sub Run_RScript( _
-    ByVal RLocation As String, _
-    ByVal ScriptLocation As String, _
-    Optional ByVal Visibility As String _
-)
+ Run_RScript( _
+     RLocation As String, _
+     ScriptLocation As String, _
+     Optional Visibility As String, _
+     Optional OnErrorEnd As Boolean = True _
+ )
 '   Uses the RScript.exe pointed to by {RLocation} to run the script
 '   found at {ScriptLocation}. Rscript.exe window displayed by default,
-'   but {Visibility}:= "VeryHidden" or "Minimized" can be used
+'   but {Visibility}:= "VeryHidden" or "Minimized" can be used.
 
 ```
 ``` VBA
