@@ -2586,7 +2586,25 @@ End Function
 '# RSCRIPT
 '===============================================================================================================================================================================================================================================================
 
+Sub Try_WriteRunRScript()
+
+Dim StringScript As String: StringScript = _
+    "writeLines('hello world'); Sys.sleep(2); " & _
+    "paste(rep('-', 75), collapse = '');" & _
+    "writeLines('lets check commands'); head(iris, 5); " & _
+    "Sys.sleep(3); example(quantile, setRNG = TRUE); Sys.sleep(5)"
+    'StringScript = Selection.Value
+    
+    Call WriteRunRScript( _
+        ScriptContents:=StringScript, _
+        RScriptVisibility:="Visible", _
+        PreserveScriptFile:=True _
+    )
+    
+End Sub
+
 Sub CheckFxValues()
+
 Dim Fx As Variant, _
     FxArray As Variant
     'Split single string of comma seperated list into many strings (skip adding the quotations)
@@ -2610,64 +2628,62 @@ Dim PackagesList As String, _
     arrPackages = Split(PackagesList, ", ")
     
     For i = LBound(arrPackages) To UBound(arrPackages)
-
-        'Formatting to:
-        'if (!require(Package)) install.packages('Package')
-        'library(Package)
-        
+    
         HighComputeScript = HighComputeScript & vbNewLine & _
                             "if (!require(" & arrPackages(i) & _
                             ")) install.packages('" & arrPackages(i) & "')" & _
                             vbNewLine & "library (" & arrPackages(i) & ")"
-                            
-        'Installing & referencing many packages is computationally intensive
-        'which allows a chance to verify the script is running on the device
-        
     Next i
     
-    Get_HighComputeScript = HighComputeScript
+        Get_HighComputeScript = HighComputeScript
         
 End Function
 
-Sub TestRunRScript()
-Dim ResultCode As Integer, _
-    ScriptContents As String
-    
-    ScriptContents = Get_HighComputeScript() & "print("
-    ResultCode = Run_TemporaryRScript(ScriptContents)
-    MsgBox "Your test was " & IIf(ResultCode = 0, "successful", "unsuccessful") & ".", vbInformation
-    
-End Sub
+Sub WriteRunRScript( _
+    ScriptContents As String, _
+    Optional RScriptVisibility As String = "Minimized", _
+    Optional PreserveScriptFile As Boolean = False _
+)
 
-Function Run_TemporaryRScript(ScriptContents As String)
-
-Dim ScriptLocation As String
-    ScriptLocation = WriteScript( _
+'Write {ScriptContents} to a .R file in the downloads folder
+Dim ScriptLocation As String: ScriptLocation = _
+    WriteScript( _
         TextContents:=ScriptContents, _
         SaveToDir:=Get_DownloadsPath(), _
         OverWrite:=True, _
-        ScriptName:="TemporaryScriptForExcel.R" _
+        ScriptName:="TempExcelScript.R" _
     )
     
-Dim ResultCode
-    ResultCode = LocateRScript_Run(ScriptLocation)
+'Run RScript and record the result
+Dim ResultCode: ResultCode = _
+    WinShell_RScript( _
+        RScriptExe_Path:=Get_RScriptExePath(), _
+        Script_Path:=ScriptLocation, _
+        VisibilityStyle:=RScriptVisibility _
+    )
+
+If PreserveScriptFile = True Then
+    'Do not remove the temporary .R file, print it's path
+    Call Print_Named(ScriptLocation, "PreserveScriptFile:=True")
+Else 'Remove the temporary .R file {ScriptLocation}
+    Call Kill(ScriptLocation)
+End If
+
+'Print if the call of the run to Shell was successful
+Call Print_Named(IIf(ResultCode = 0, "Successful", "Unsuccessful"), "Shell Run Status")
     
-    Kill ScriptLocation
-    
-    Debug.Print IIf(ResultCode = 0, True, False)
-    
+End Sub
+
+Function ListRLibraries()
+Dim RLibraryString As String 'Note: R is ran on each call
+    RLibraryString = CaptureRScriptOutput( _
+        "message(paste(dir(Sys.getenv('R_LIBS_USER')), collapse = ','))", _
+        RScriptVisibility:="Hidden" _
+    )
+    ListRLibraries = Split(RLibraryString, ",")
 End Function
 
-Function LocateRScript_Run(ScriptPath As String)
-
-LocateRScript_Run = WinShell_RScript( _
-                        RScriptExe_Path:=Get_RScriptExePath(), _
-                        Script_Path:=ScriptPath, _
-                        VisibilityStyle:="Visible" _
-                    )
-End Function
-
-Function CaptureScriptOutput( _
+Function CaptureRScriptOutput( _
     ScriptContents As String, _
     Optional IncludeInfo As Boolean = False, _
     Optional RScriptVisibility As String = "Minimized", _
@@ -2708,7 +2724,7 @@ ArrayWrap = Array("DebugTxtPath <- r'(" & Path_DebugOutputTxt & ")'", _
                   "print('This was shown with print()')", _
                   "message('This was shown with message()')", "message('')", _
                   "message('The R libraries for the user are located here:')", _
-                  "message(Sys.getenv('R_LIS_USER'))", "message('')", _
+                  "message(Sys.getenv('R_LIBS_USER'))", "message('')", _
                   "TimeStamp <- Sys.time()", _
                   "message(rep('=', 75))", _
                   "message(paste0('The output of your script begins here (', format(Sys.time(), '%b %d %X'), ')'))", _
@@ -2746,7 +2762,7 @@ If IncludeInfo = True And WinShellResult = 1 Then
 End If
 
 'After Rscript has finished running, and writing the text file, read it
-CaptureScriptOutput = ReadLines( _
+CaptureRScriptOutput = ReadLines( _
                         TxtFile:=Path_DebugOutputTxt, _
                         ToImmediate:=True, _
                         ToClipboard:=False, _
@@ -2837,6 +2853,37 @@ Dim OS As String: OS = MyOS()
         Get_RFolder = "/Library/Frameworks/R.framework/Resources/bin/R"
     End If
     
+End Function
+
+Function WriteScript( _
+    TextContents As String, _
+    SaveToDir As String, _
+    Optional OverWrite As Boolean = False, _
+    Optional ScriptName As String = "Script.R" _
+)
+
+'Add FileSep to directory string if required
+If Right(SaveToDir, 1) <> PlatformFileSep() Then SaveToDir = SaveToDir & PlatformFileSep()
+
+If OverWrite <> True Then
+    If Dir(SaveToDir & ScriptName) <> vbNullString Then
+        Dim i As Integer, SplitName As Variant, TryName As String
+        For i = 1 To 100
+            SplitName = Split(ScriptName, ".")
+            TryName = SplitName(0) & " (" & i & ")" & "." & SplitName(1)
+            If Dir(SaveToDir & TryName) = vbNullString Then
+                ScriptName = TryName
+                Exit For
+            End If
+        Next i
+    End If
+End If
+
+Open SaveToDir & ScriptName For Output As #1
+Print #1, TextContents
+Close #1
+
+WriteScript = CStr(SaveToDir & ScriptName)
 End Function
 
 '===============================================================================================================================================================================================================================================================
