@@ -24,13 +24,6 @@ Option Explicit
 '   End Sub
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-Public GlobalUser As String
-'
-''   Prevents needless rerunning of the file search component of
-''   Get_WindowsUsername() once the local user has been determined.
-'
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
 Public GlobalTempMenuCommands() As Variant
 Public GlobalTempMenuSections() As Variant
 '
@@ -46,19 +39,20 @@ Public GlobalTempMenuSections() As Variant
 '----------------------------------------------------------------``` VBA
 '  Get_Username()
 '
-''   Returns username regardless of Windows or Mac OS.
+''   Returns username by reading the environment variable.
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
 '  Get_DesktopPath()
 '
-''   Returns Mac or Windows desktop directory (even if on OneDrive).
+''   Returns the desktop path regardless of platform with handling
+''   for OneDrive hosted desktops.
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
 '  Get_DownloadsPath()
 '
-''   Returns Mac or Windows downloads directory (even if on OneDrive).
+''   Returns the desktop path regardless of platform.
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
@@ -223,20 +217,6 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  Get_WindowsUsername()
-'
-''   Loops through folders to find paths matching C:\Users\...\AppData
-''   then extracts the User from correct path. Superior to reading
-''   .FullName of workbook which does not work for OneDrive.
-'
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
-'  Get_MacUsername()
-'
-''   Reads ActiveWorkbook.FullName property to get Mac user.
-'
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA
 ' PlatformFileSep()
 '
 ''   Returns "\" or "/" depending on the operating system.
@@ -245,7 +225,8 @@ Public GlobalTempMenuSections() As Variant
 '----------------------------------------------------------------``` VBA
 '  MyOS()
 '
-''   "Windows",  "Mac", or "Neither Windows or Mac".
+''   Read the system environment OS variable and returns "Windows",
+''   "Mac", or the unaltered Environ("OS") output if neither.
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
@@ -280,7 +261,7 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  ExtractFirstInt_RightToLeft (aVariable)
+'  ExtractFirstInt_RightToLeft(aVariable)
 '
 ''   Returns the first integer found in a string when searcing
 ''   from the right end of the string to the left.
@@ -289,7 +270,7 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  ExtractFirstInt_LeftToRight (aVariable)
+'  ExtractFirstInt_LeftToRight(aVariable)
 '
 ''   Returns the first integer found in a string when searcing
 ''   from the left end of the string to the right.
@@ -298,7 +279,7 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  Truncate_Before_Int (aString)
+'  Truncate_Before_Int(aString)
 '
 ''   Removes characters before first integer in a sequence of characters.
 '
@@ -306,7 +287,7 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  Truncate_After_Int (aString)
+'  Truncate_After_Int(aString)
 '
 ''   Removes characters after first integer in a sequence of characters.
 '
@@ -314,7 +295,7 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  IsInt_NoTrailingSymbols (aNumeric)
+'  IsInt_NoTrailingSymbols(aNumeric)
 '
 ''   Checks if supplied value is both numeric, and contains no numeric
 ''   symbols (different from IsNumeric).
@@ -388,7 +369,7 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-' LaunchLink (aLink)
+' LaunchLink(aLink)
 '
 ''   Launches aLink in existing browser with error handling for
 ''   invalid Links
@@ -426,22 +407,28 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  ToggleDisplayMode()
+' ToggleDisplayMode()
 '
 ''   Toggles display of ribbon, formula bar, status bar & headings
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  Print_Pad()
+'  PrintEnvironVariables()
 '
-''   Uses Debug.Print to print a timestamped seperator of "======"
+''   Print the environment variables to the Immediate window.
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  Print_Named(Something, Optional Label)
+' Print_Named(Something, Optional Label)
 '
 ''   Uses Debug.Print to add a space between each {Something} printed,
 ''   labels each {Something} if {Label} supplied.
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+' Print_Pad()
+'
+''   Uses Debug.Print to print a timestamped seperator of "======"
 '
 '----------------------------------------------------------------```
 '===============================================================================================================================================================================================================================================================
@@ -602,28 +589,28 @@ Public GlobalTempMenuSections() As Variant
 '    All RScript functions are currently Windows OS only.
 '
 '----------------------------------------------------------------``` VBA
-'  QuickRun_RScript(ByVal ScriptContents As String)
+' QuickWinShell_RScript(ByVal ScriptContents As String)
 '
 ''   Writes a temporary .R script containing {ScriptContents}, runs
 ''   it, prompts for the deletion of the temporary script
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  WriteTemp_RScript(ByVal ScriptContents As String)
+' WriteTemp_RScript(ByVal ScriptContents As String)
 '
 ''   Creates a random named temporary folder on desktop, creates an
 ''   .R file "Temp.R" containing {ScriptContents}, returns Temp.R path
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  LocateRScript_Run(ByVal Script_Path)
+' LocateRScript_Run(ByVal Script_Path)
 '
 ''   Takes a string or cell reference {RScriptPath} & runs it on the
 ''   latest version of R on the OS
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-' Run_RScript( _
+' WinShell_RScript( _
 '     RScriptExe_Path As String, _
 '     Script_Path As String, _
 '     Optional Visibility As String, _
@@ -635,19 +622,19 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  Get_RScriptExePath() As String
+' Get_RScriptExePath() As String
 '
 ''   Returns the path to the latest version of Rscript.exe
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  Get_LatestRVersion(ByVal RVersions As Variant)
+' Get_LatestRVersion(ByVal RVersions As Variant)
 '
 ''   Returns the latest version of R currently installed
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  Get_RVersions(ByVal RFolderPath As String)
+' Get_RVersions(ByVal RFolderPath As String)
 '
 ''   Returns an array of the R versions currently installed
 '
@@ -660,7 +647,7 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  Test_QuickRun_RScript()
+' Test_QuickWinShell_RScript()
 '
 ''   Writes a computationally intensive script to Desktop and asks
 ''   if you want to run it (to visually verify all zRun_R f(x) worked)
@@ -990,40 +977,6 @@ CopySheets_FromFolder = NewSheets()
     
 Application.StatusBar = False
 Application.ScreenUpdating = ScreenUpdatingState
-End Function
-
-Function Get_DownloadsPath()
-
-If MyOS = "Windows" Then
-    Get_DownloadsPath = "C:\Users\" & Get_WindowsUsername() & "\Downloads"
-ElseIf MyOS = "Mac" Then
-    Get_DownloadsPath = "/Users/" & Get_MacUsername & "/Downloads"
-End If
-    
-End Function
-
-Function Get_DesktopPath()
-
-If MyOS = "Windows" Then
-    
-    Dim ThisUserName As String, _
-        ExpectedPath As String
-        ThisUserName = Get_WindowsUsername()
-        
-        ExpectedPath = "C:\Users\" & ThisUserName & "\Desktop"
-            
-        If Dir(ExpectedPath, vbDirectory) = "" Then
-            'OneDrive Windows OS
-            Get_DesktopPath = "C:\Users\" & ThisUserName & "\OneDrive\Desktop"
-            Exit Function
-        End If
-            
-            Get_DesktopPath = ExpectedPath
-        
-ElseIf MyOS = "Mac" Then
-    Get_DesktopPath = "/Users/" & Get_MacUsername & "/Desktop"
-End If
-    
 End Function
 
 Function Get_LatestFile( _
@@ -1492,7 +1445,7 @@ Dim Slash As String, _
     ThisUser As String, _
     i As Integer
     
-ThisUser = Get_Username()
+ThisUser = Get_Username
 Slash = PlatformFileSep()
             
 'Check to verify file path supplied, if not, 2 folders would be deleted so exit
@@ -1539,180 +1492,30 @@ NoDelete:
             
 End Function
 
-Function Get_Username()
+Function Get_DownloadsPath()
+    Get_DownloadsPath = Environ("USERPROFILE") & PlatformFileSep & "Downloads"
+End Function
 
-Dim ThisOS As String
-    ThisOS = MyOS()
-
-    If ThisOS = "Windows" Then
-        Get_Username = Get_WindowsUsername
-    ElseIf ThisOS = "Mac" Then
-        Get_Username = Get_MacUsername
+Function Get_DesktopPath()
+    If Environ("OneDriveConsumer") <> vbNullString Then
+        Get_DesktopPath = Environ("OneDriveConsumer") & PlatformFileSep() & "Desktop"
     Else
-        'Windows & Mac only
-        Get_Username = vbNullString
+        Get_DesktopPath = Get_Username() & PlatformFileSep() & "Desktop"
     End If
-
-End Function
-Function Get_WindowsUsername()
-    Get_WindowsUsername = "Temp"
-End Function
-Sub sGet_WindowsUsername()
-
-'If GlobalUser <> vbNullString Then
-'    Get_WindowsUsername = GlobalUser
-'    Exit Sub
-'End If
-
-Dim UserDirectory As String: UserDirectory = "C:\Users\"
-Dim UserFolders As Variant: UserFolders = ListFolders(UserDirectory)
-Dim FileSep As String: FileSep = PlatformFileSep()
-
-Dim FilteredFolders As Variant, _
-    UserFolder As Variant, _
-    HasDownloadsDir As Variant, _
-    FilterTerms As Variant, _
-    Term As Variant
-
-    'Remove {C:\Users\..} and {C:\Users\.} from UserFolders
-    FilteredFolders = Filter(UserFolders, "\.", False)
-    
-    'Remove {C:\Users\Public} from FilteredFolders
-    FilteredFolders = Filter(FilteredFolders, "Public", False)
-    
-    'Look into each {UserFolder} within FilteredFolders
-    For Each UserFolder In FilteredFolders
-            
-        On Error Resume Next 'Ignore inaccessible folders, which would not be the user
-        
-        'Look into the {UserFolder} for the Downloads directory
-        HasDownloadsDir = Filter(ListFolders(UserFolder & FileSep), "Downloads", True)(0) <> vbNullString
-        
-        On Error GoTo -1
-        
-        'If the {UserFolder} does not have a downloads directory...
-        If HasDownloadsDir <> True Then
-        
-            '...it would not contain the username
-            FilteredFolders = Filter(FilteredFolders, UserFolder, False)
-        End If
-        
-    Next UserFolder
-        
-        
-        For Each UserFolder In FilteredFolders
-            Print_Named CStr(UserFolder), "UserFolder"
-        Next UserFolder
-        
-        'Non-username folders contained within the UserDirectory
-        FilterTerms = Array(".", "Public", "AppData", "Default", "All Users")
-      '  FilteredFolders = UserFolders 'Initalize
-        
-        For Each Term In FilterTerms
-      '      FilteredFolders = Filter(FilteredFolders, CStr(Term), False)
-        Next Term
-        
-      '  GlobalUser = Replace(FilteredFolders(0), "C:\Users\", vbNullString)
-        'Get_WindowsUsername = GlobalUser
-        
-End Sub
-
-Function Get_WindowsUsernameOld()
-
-If GlobalUser <> vbNullString Then
-    Get_WindowsUsername = GlobalUser
-    Exit Function
-End If
-
-If MyOS() <> "Windows" Then
-    Get_WindowsUsername = ""
-    Exit Function
-End If
-
-Dim FSO As Object, _
-    ParentFolder As Object, _
-    ParentFolderPath As String, _
-    ChildFolder As Object, _
-    ChildFolderPath As String, _
-    arrPaths() As Variant, _
-    i As Integer
-    
-    'Folder on all Windows OS
-    ParentFolderPath = "C:\Users\"
-    
-    Set FSO = CreateObject("Scripting.FileSystemObject")
-    Set ParentFolder = FSO.GetFolder(ParentFolderPath)
-        
-        For Each ChildFolder In ParentFolder.SubFolders
-            
-            'C:\Users\{ChildFolder}
-            ChildFolderPath = ChildFolder.Path
-            
-            Dim ChildChildFolder As Object: Set ChildChildFolder = FSO.GetFolder(ChildFolderPath)
-            Dim ChildChildFolderPath As String
-            
-            'To handle permission errors
-            On Error Resume Next
-            For Each ChildChildFolder In ChildFolder.SubFolders
-                
-                'Returns path with Username between "C:\Users\" & "\AppData"
-                '& filters out "C:\Users\All Users\AppData" & "C:\Users\Default\AppData"
-                If InStr(1, ChildChildFolder.Path, "AppData") <> 0 And _
-                   InStr(1, ChildChildFolder.Path, "All Users") = 0 And _
-                   InStr(1, ChildChildFolder.Path, "Default") = 0 Then
-                    
-                    'C:\Users\{ChildFolder}\{ChildChildFolder}
-                    ReDim Preserve arrPaths(i): i = i + 1
-                    arrPaths(UBound(arrPaths)) = ChildChildFolder.Path
-                    
-                    'Extract Username
-                    arrPaths(UBound(arrPaths)) = Replace(arrPaths(UBound(arrPaths)), "C:\Users\", vbNullString)
-                    arrPaths(UBound(arrPaths)) = Replace(arrPaths(UBound(arrPaths)), "\AppData", vbNullString)
-                    
-                End If
-                
-            Next ChildChildFolder
-            
-        Next ChildFolder
-            
-            Set FSO = Nothing
-            Set ParentFolder = Nothing
-            Set ChildFolder = Nothing
-            Set ChildChildFolder = Nothing
-                
-                If UBound(arrPaths) <> 0 Then
-                    Get_WindowsUsername = "Error Finding User"
-                End If
-                
-                    GlobalUser = arrPaths(0)
-                    Get_WindowsUsername = arrPaths(0)
-
 End Function
 
-Function Get_MacUsername()
-'Will not work for cloud hosted files
-
-If MyOS() <> "Mac" Then
-    Get_MacUsername = ""
-    Exit Function
-End If
-
-Dim TempString As String, _
-    SlashLocation As Integer
-    
-    TempString = Replace(ActiveWorkbook.FullName, "/Users/", "")
-       SlashLocation = InStr(1, TempString, "/")
-           Get_MacUsername = Left(TempString, SlashLocation - 1)
-
+Function Get_Username()
+    Get_Username = Environ("USERNAME")
 End Function
 
 Function MyOS()
-    If InStr(1, Application.OperatingSystem, "Windows") <> 0 Then
+Dim EnvOS As String: EnvOS = Environ("OS")
+    If InStr(1, EnvOS, "Windows") <> 0 Then
         MyOS = "Windows"
-    ElseIf InStr(1, Application.OperatingSystem, "Mac") <> 0 Then
+    ElseIf InStr(1, EnvOS, "Mac") <> 0 Then
         MyOS = "Mac"
     Else
-        MyOS = "Neither Windows or Mac"
+        MyOS = EnvOS
     End If
 End Function
 
@@ -2038,8 +1841,25 @@ On Error Resume Next
         
 End Sub
 
-Sub Print_Pad()
-    Debug.Print ("================== " & Format(Now(), "Long Time") & " ==================")
+Sub PrintEnvironVariables()
+Dim i As Integer: i = 1
+
+Dim EnvVarItem As Variant, _
+    EnvVarName As String, _
+    EnvVar As String
+
+    EnvVarItem = Split(Environ(i), "=")
+    EnvVarName = CStr(EnvVarItem(0))
+    EnvVar = CStr(EnvVarItem(1))
+
+    Do Until Environ(i) = vbNullString
+        EnvVarItem = Split(Environ(i), "=")
+        EnvVarName = CStr(EnvVarItem(0))
+        EnvVar = CStr(EnvVarItem(1))
+        Call Print_Named(EnvVar, EnvVarName)
+        i = i + 1
+    Loop
+
 End Sub
 
 Sub Print_Named(ByVal Something, Optional Label)
@@ -2058,6 +1878,10 @@ SomethingIsNothing:
 On Error GoTo -1
     Debug.Print "Error Printing Value"
     Debug.Print ""
+End Sub
+
+Sub Print_Pad()
+    Debug.Print ("================== " & Format(Now(), "Long Time") & " ==================")
 End Sub
 
 '===============================================================================================================================================================================================================================================================
@@ -2093,7 +1917,7 @@ Sub ExampleSub()
     MsgBox "This a message shown by calling 'ExampleSub'", vbInformation, "ExampleSub"
 End Sub
 
-Sub WriteLines(MyText As String, Optional Repeat As Integer = 1)
+Sub MsgLines(MyText As String, Optional Repeat As Integer = 1)
     MyText = Application.WorksheetFunction.Rept(MyText & vbNewLine, Repeat)
     MsgBox MyText 'Simple sub to call (with parameters)
 End Sub
@@ -2609,7 +2433,7 @@ MsgBox "Creating a [Blank Button] shape that does nothing:", vbInformation, "[Bl
 MsgBox "Creating a button, calling it [Button One], and assigning some properties", vbInformation, "[Button One]"
     Call CreateButtonShape( _
         btnLabel:="Button One", _
-        StrCommand:="WriteLines{'This is a message'}", _
+        StrCommand:="MsgLines{'This is a message'}", _
         btnColor:=5242976, _
         Top:=40 _
     )
@@ -2620,7 +2444,7 @@ MsgBox "Creating a button, calling it [Button Two], assigning some properties, a
         CreateButtonShape( _
             btnLabel:="Button Two", _
             btnName:="btnTwo", _
-            StrCommand:="WriteLines{MyText:='This is a message', Repeat:=4}", _
+            StrCommand:="MsgLines{MyText:='This is a message', Repeat:=4}", _
             btnColor:=5242976, _
             Lef:=120, _
             Hei:=50 _
@@ -2716,22 +2540,20 @@ End Function
 '# RSCRIPT
 '===============================================================================================================================================================================================================================================================
 
-Sub CheckSystemInfo()
-Print_Pad
-               Print_Named MyOS(), "MyOS()"
-    Print_Named PlatformFileSep(), "PlatformFileSep()"
-       Print_Named Get_Username(), "Get_Username()"
-    Print_Named Get_DesktopPath(), "Get_DesktopPath()"
-  Print_Named Get_DownloadsPath(), "Get_DownloadsPath()"
-        Print_Named Get_RFolder(), "Get_RFolder()"
-       Print_Named Get_RScriptExePath(), "Get_RScriptExePath()"
-Print_Pad
+Sub CheckFxValues()
+Dim Fx As Variant, _
+    FxArray As Variant
+    'Split single string of comma seperated list into many strings (skip adding the quotations)
+    FxArray = Split("MyOS, PlatformFileSep, Get_Username, Get_DesktopPath, Get_DownloadsPath, Get_RFolder, Get_RScriptExePath", ", ")
+    
+        'Evaluate each Fx on the local user
+        For Each Fx In FxArray
+            Call Print_Named(Application.Run("'" & Fx & "'"), Fx)
+        Next Fx
+
 End Sub
 
-Sub Test_QuickRun_RScript()
-
-'NOTE: It's best to paste a script into a cell and reading
-'it's .Value as opposed to writing it in the VBA editor
+Function Get_HighComputeScript()
 
 Dim PackagesList As String, _
     arrPackages As Variant, _
@@ -2747,135 +2569,241 @@ Dim PackagesList As String, _
         'if (!require(Package)) install.packages('Package')
         'library(Package)
         
-        'Installing & referencing many packages is computationally intensive
-        'which allows a chance to verify the script is running on the device
-        
         HighComputeScript = HighComputeScript & vbNewLine & _
                             "if (!require(" & arrPackages(i) & _
                             ")) install.packages('" & arrPackages(i) & "')" & _
                             vbNewLine & "library (" & arrPackages(i) & ")"
+                            
+        'Installing & referencing many packages is computationally intensive
+        'which allows a chance to verify the script is running on the device
+        
     Next i
     
-        Dim Answer: Answer = MsgBox("The following script is about to be ran in R:" & _
-                                    vbNewLine & HighComputeScript & vbNewLine & vbNewLine & _
-                                    "Press OK to continue, or Cancel to exit.", vbOKCancel)
-                                    
-        If Answer = vbOK Then Call QuickRun_RScript(HighComputeScript)
+    Get_HighComputeScript = HighComputeScript
         
-End Sub
-
-Sub QuickRun_RScript(ByVal ScriptContents As String)
-
-Dim TempScriptPath As String, _
-    TempFolderPath As String, _
-    i As Integer, _
-    Slash As String, _
-    Answer As String
-    
-        TempScriptPath = WriteTemp_RScript(ScriptContents)
-        If MyOS = "Windows" Then Slash = "\" Else Slash = "/"
-        Call LocateRScript_Run(TempScriptPath)
-                
-                'NOTE: MsgBox question serves as both an option and a workaround for long R procedures
-                'which prevent VBA's command line call from deleting Temp.R prior to Rscript.exe unloading Temp.R
-                Answer = MsgBox("Temporary script written to desktop and ran in R." & vbNewLine & vbNewLine & _
-                                "Would you like to delete the temporary file and it's folder?", vbYesNo, "Delete Temp.R File & Folder?")
-            
-                If Answer = vbYes Then
-                    'Deletion successful
-                    If ƒ—Delete_FileAndFolder(TempScriptPath) = True Then
-                        
-                        'Initially set {TempFolderPath} to {TempScriptPath} prior to loop
-                        TempFolderPath = TempScriptPath
-                        
-                        'Reduce {TempFolderPath} until it's a directory
-                        For i = Len(TempFolderPath) To 1 Step -1
-            
-                            TempFolderPath = Left(TempFolderPath, Len(TempFolderPath) - 1)
-                            If Right(TempFolderPath, 1) = Slash Then
-                                TempFolderPath = Left(TempFolderPath, Len(TempFolderPath) - 1)
-                                Exit For
-                            End If
-                            
-                        Next i
-                        MsgBox "Temp.R and folder directory " & TempFolderPath & " deleted."
-                    Else
-                        MsgBox "Error deleting " & TempFolderPath
-                    End If
-                End If
-            
-End Sub
-
-Function WriteTemp_RScript(ByVal ScriptContents As String)
-
-Dim FSO As Object: Set FSO = CreateObject("Scripting.FileSystemObject")
-Dim TempFolder As String
-    
-    'Create temporary folder to house temp.R
-    TempFolder = Get_DesktopPath & "\Temp" & Left(Format(Now(), "ss") * Rnd() * 1000, 3)
-
-    Call MkDir(TempFolder)
-        
-    'Write temp.R into {TempFolder}
-    Dim Fileout As Object
-    Set Fileout = FSO.CreateTextFile(TempFolder & "\" & "Temp.R", True, False)
-        Fileout.Write ScriptContents
-        Fileout.Close
-            
-            WriteTemp_RScript = TempFolder & "\" & "Temp.R"
-
-Set Fileout = Nothing
-Set FSO = Nothing
 End Function
 
-Sub LocateRScript_Run(Script_Path As String)
+Sub test()
+Dim DebugLoc As String
+    DebugLoc = DebugWrapScript(Get_HighComputeScript())
+End Sub
 
-    Call Run_RScript( _
-        RScriptExe_Path:=Get_RScriptExePath, _
-        Script_Path:=Script_Path, _
-        Visibility:="Visible" _
-    )
+Sub testwr()
+Dim Var As String
+
+Var = WriteLines("C:\Users\chris\Downloads\Debug.txt")
+
 
 End Sub
 
-Sub Run_RScript( _
-    RScriptExe_Path As String, _
-    Script_Path As String, _
-    Optional Visibility As String, _
-    Optional OnErrorEnd As Boolean = True _
+Function WriteLines( _
+    TxtFile As String, _
+    Optional ToImmediate As Boolean = True, _
+    Optional ToClip As Boolean = True _
 )
 
-Dim WaitTillComplete As Boolean: WaitTillComplete = True
-Dim Style As Integer: Style = 1
+Dim SheetFX As Object: Set SheetFX = Application.WorksheetFunction
+Dim FileNum As Integer: FileNum = FreeFile
+Dim TxtFileLines() As String
+    
+    Open TxtFile For Input As FileNum
+        TxtFileLines = Split(Input$(LOF(FileNum), FileNum), vbNewLine)
+    Close FileNum
 
-Dim oShell As Object, _
+Dim TxtFileContents As String
+    TxtFileContents = SheetFX.TextJoin(vbNewLine, False, TxtFileLines)
+    
+If ToImmediate = True Then
+    If MyOS() <> "Windows" Then
+        Debug.Print TxtFileContents
+    Else 'Use Regex if on Windows to replace illegal characters
+        Debug.Print _
+        Replace_Any( _
+            Of_Str:="”€âœ", _
+            With_Str:="-", _
+            Within_Str:=TxtFileContents _
+        )
+    End If
+End If
+
+If ToClip = True Then
+    Call Print_Named( _
+        IIf(Clipboard_Load(TxtFileContents) = True, _
+        "Output copied to clipboard.", _
+        "Output could not be copied to clipboard."), _
+        "Clipboard Status" _
+    )
+End If
+    
+Set SheetFX = Nothing
+End Function
+
+Function DebugWrapScript( _
+    ScriptContents As String, _
+    Optional DebugTxtName As String = "Debug", _
+    Optional DebugTxtDir As String = "Downloads" _
+)
+
+'{DebugTxtDir} should be a full path, but Optional parameters cannot be set to a function
+If DebugTxtDir = "Downloads" Then DebugTxtDir = Get_DownloadsPath() & PlatformFileSep()
+
+'Path to .R file that will generate {Path_DebugOutputTxt}
+Dim Path_DebugScript As String:  Path_DebugScript = DebugTxtDir & DebugTxtName & ".R"
+
+'Path to the .txt file that will be written into the .R file
+Dim Path_DebugOutputTxt As String:  Path_DebugOutputTxt = DebugTxtDir & DebugTxtName & ".txt"
+
+Dim SheetFX As Object: Set SheetFX = Application.WorksheetFunction
+Dim ArrayWrap As Variant
+
+'Write each line of the script to an array
+ArrayWrap = Array("DebugTxtPath <- r'(" & Path_DebugOutputTxt & ")'", _
+                  "file_connection <- file(DebugTxtPath)", _
+                  "sink(file_connection, append=TRUE)", _
+                  "sink(file_connection, append=TRUE, type='message')", _
+                  "message('NOTE: The look of messages are as follows:')", _
+                  "message('')", _
+                  "print('This was shown with print()')", _
+                  "message('This was shown with message()')", _
+                  "message('')", _
+                  "message('The R libraries for the user are located here:')", _
+                  "message(Sys.getenv('R_LIBS_USER'))", _
+                  "message('')", _
+                  "message(rep('=', 75))", _
+                  "message('The output of your script begins here')", _
+                  "message(rep('=', 75))", _
+                  "message('')", _
+                  ScriptContents, _
+                  "message('')", _
+                  "message(rep('=', 75))", _
+                  "message('The output of your script ends here')", _
+                  "message(rep('=', 75))", _
+                  "sink() # Stop recording console output", _
+                  "sink(type='message')")
+                
+'Join each item (line) of the ArrayWrap above into {ScriptContents}
+ScriptContents = SheetFX.TextJoin(vbNewLine, True, ArrayWrap)
+
+'Write the wrapped {ScriptContents}
+Open Path_DebugScript For Output As #1
+Print #1, ScriptContents
+Close #1
+
+'Run the wrapped {ScriptContents}
+DebugWrapScript = LocateRScript_Run(Path_DebugScript)
+
+End Function
+
+Sub TestRunRScript()
+Dim ResultCode As Integer, _
+    ScriptContents As String
+    
+    ScriptContents = Get_HighComputeScript() & "print("
+    ResultCode = Run_TemporaryRScript(ScriptContents)
+    MsgBox "Your test was " & IIf(ResultCode = 0, "successful", "unsuccessful") & ".", vbInformation
+    
+End Sub
+
+Function Run_TemporaryRScript(ScriptContents As String)
+
+Dim ScriptLocation As String
+    ScriptLocation = WriteScript( _
+        TextContents:=ScriptContents, _
+        SaveToDir:=Get_DownloadsPath(), _
+        OverWrite:=True, _
+        ScriptName:="TemporaryScriptForExcel.R" _
+    )
+    
+Dim ResultCode
+    ResultCode = LocateRScript_Run(ScriptLocation)
+    
+    Kill ScriptLocation
+    
+    Debug.Print IIf(ResultCode = 0, True, False)
+    
+End Function
+
+Function LocateRScript_Run(ScriptPath As String)
+
+LocateRScript_Run = WinShell_RScript( _
+                        RScriptExe_Path:=Get_RScriptExePath(), _
+                        Script_Path:=ScriptPath, _
+                        VisibilityStyle:="Visible" _
+                    )
+End Function
+
+Function WriteScript( _
+    TextContents As String, _
+    SaveToDir As String, _
+    Optional OverWrite As Boolean = False, _
+    Optional ScriptName As String = "Script.R" _
+)
+
+'Add FileSep to directory string if required
+If Right(SaveToDir, 1) <> PlatformFileSep() Then SaveToDir = SaveToDir & PlatformFileSep()
+
+If OverWrite <> True Then
+    If Dir(SaveToDir & ScriptName) <> vbNullString Then
+        Dim i As Integer, SplitName As Variant, TryName As String
+        For i = 1 To 100
+            SplitName = Split(ScriptName, ".")
+            TryName = SplitName(0) & " (" & i & ")" & "." & SplitName(1)
+            If Dir(SaveToDir & TryName) = vbNullString Then
+                ScriptName = TryName
+                Exit For
+            End If
+        Next i
+    End If
+End If
+
+Open SaveToDir & ScriptName For Output As #1
+Print #1, TextContents
+Close #1
+
+WriteScript = CStr(SaveToDir & ScriptName)
+End Function
+
+Function Apple_RScript( _
+    RScriptExe_Path As String, _
+    Script_Path As String, _
+    Optional VisibilityStyle As String _
+)
+
+'TODO
+
+End Function
+
+Function WinShell_RScript( _
+    RScriptExe_Path As String, _
+    Script_Path As String, _
+    Optional VisibilityStyle As String _
+)
+
+Dim Style As Integer: Style = 1
+Select Case VisibilityStyle
+    Case "Hidden": Style = 0
+    Case "Visible": Style = 1
+    Case "Minimized": Style = 2
+End Select
+    
+Dim WinShell As Object, _
     ErrorCode As Integer, _
     Escaped_RScriptExe As String, _
     Escaped_Script As String, _
     RShellCommand As String
     
-    If Visibility = "VeryHidden" Then
-        Style = 0
-    ElseIf Visibility = "Minimized" Then
-        Style = 2
-    End If
-    
-Set oShell = CreateObject("WScript.Shell")
+Dim WaitTillComplete As Boolean: WaitTillComplete = True
+Set WinShell = CreateObject("WScript.Shell")
         
     Escaped_RScriptExe = Chr(34) & Replace(RScriptExe_Path, "\", "\\") & Chr(34)
     Escaped_Script = Chr(34) & Replace(Script_Path, "\", "\\") & Chr(34)
     RShellCommand = Escaped_RScriptExe & Escaped_Script
-    ErrorCode = oShell.Run(RShellCommand, Style, WaitTillComplete)
-
-        If OnErrorEnd = True And ErrorCode <> 0 Then
-            MsgBox "Error attempting to run script. Ensure that any potential exceptions are wrapped in try().", vbInformation, "Run Failure"
-            End
-        End If
+    
+    ErrorCode = WinShell.Run(RShellCommand, Style, WaitTillComplete)
+    WinShell_RScript = ErrorCode
         
-        Call Print_Named(ErrorCode, "ErrorCode")
-        
-Set oShell = Nothing
-End Sub
+Set WinShell = Nothing
+End Function
 
 Function Get_RScriptExePath() As String
 Dim RVersions As Variant: RVersions = Get_RVersions(Get_RFolder)
@@ -2910,37 +2838,6 @@ Dim OS As String: OS = MyOS()
         Get_RFolder = "/Library/Frameworks/R.framework/Resources/bin/R"
     End If
     
-End Function
-
-Function WriteScript( _
-    TextContents As String, _
-    SaveToDir As String, _
-    Optional OverWrite As Boolean = False, _
-    Optional ScriptName As String = "Script.R" _
-)
-
-'Add FileSep to directory string if required
-If Right(SaveToDir, 1) <> PlatformFileSep() Then SaveToDir = SaveToDir & PlatformFileSep()
-
-If OverWrite <> True Then
-    If Dir(SaveToDir & ScriptName) <> vbNullString Then
-        Dim i As Integer, SplitName As Variant, TryName As String
-        For i = 1 To 100
-            SplitName = Split(ScriptName, ".")
-            TryName = SplitName(0) & " (" & i & ")" & "." & SplitName(1)
-            If Dir(SaveToDir & TryName) = vbNullString Then
-                ScriptName = TryName
-                Exit For
-            End If
-        Next i
-    End If
-End If
-
-Open SaveToDir & ScriptName For Output As #1
-Print #1, TextContents
-Close #1
-
-WriteScript = CStr(SaveToDir & ScriptName)
 End Function
 
 '===============================================================================================================================================================================================================================================================
