@@ -118,9 +118,9 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  Clipboard_Load(ByVal aString As String)
+'  Clipboard_Load(ByVal YourString As String)
 '
-''   Stores {aString} in clipboard.
+''   Stores {YourString} in clipboard.
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
@@ -279,7 +279,7 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  Truncate_Before_Int(aString)
+'  Truncate_Before_Int(YourString)
 '
 ''   Removes characters before first integer in a sequence of characters.
 '
@@ -287,7 +287,7 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  Truncate_After_Int(aString)
+'  Truncate_After_Int(YourString)
 '
 ''   Removes characters after first integer in a sequence of characters.
 '
@@ -1115,10 +1115,56 @@ Function PlatformFileSep()
     End If
 End Function
 
-Function Clipboard_Load(ByVal aString As String) As Boolean
+Function ReadLines( _
+    TxtFile As String, _
+    Optional ToImmediate As Boolean = True, _
+    Optional ToClipboard As Boolean = True, _
+    Optional Replace_AnyOf As String = "Of String", _
+    Optional Replace_With As String = "With String" _
+)
+
+Dim SheetFX As Object: Set SheetFX = Application.WorksheetFunction
+Dim FileNum As Integer: FileNum = FreeFile
+Dim TxtFileLines() As String
+    
+    Open TxtFile For Input As FileNum
+        TxtFileLines = Split(Input$(LOF(FileNum), FileNum), vbNewLine)
+    Close FileNum
+
+Dim TxtFileContents As String
+    TxtFileContents = SheetFX.TextJoin(vbNewLine, False, TxtFileLines)
+
+'Use UDF Replace_Any() on Windows (Regex not available on Mac)
+If MyOS() = "Windows" Then
+    'Optional default is meant to indicate how the parameter works...
+    If Replace_AnyOf <> "Of String" Then
+        '...only proceed with replacement if the default value has been changed
+        TxtFileContents = Replace_Any(Replace_AnyOf, Replace_With, TxtFileContents)
+    End If
+End If
+
+If ToImmediate = True Then
+    Debug.Print TxtFileContents
+End If
+
+If ToClipboard = True Then
+    Call Print_Named( _
+        IIf(Clipboard_Load(TxtFileContents) = True, _
+        "Output copied to clipboard.", _
+        "Output could not be copied to clipboard."), _
+        "Clipboard Status" _
+    )
+End If
+
+ReadLines = TxtFileContents
+    
+Set SheetFX = Nothing
+End Function
+
+Function Clipboard_Load(ByVal YourString As String) As Boolean
 
 On Error GoTo NoLoad
-    CreateObject("HTMLFile").ParentWindow.ClipboardData.SetData "text", aString
+    CreateObject("HTMLFile").ParentWindow.ClipboardData.SetData "text", YourString
     Clipboard_Load = True
     Exit Function
     
@@ -1341,7 +1387,7 @@ ExtractFirstInt_LeftToRight = vbNullString
 
 End Function
 
-Function Truncate_Before_Int(ByVal aString As String)
+Function Truncate_Before_Int(ByVal YourString As String)
 On Error GoTo NoInt:
 
 Dim CountCharsToRemove As Integer, _
@@ -1349,21 +1395,21 @@ Dim CountCharsToRemove As Integer, _
     NewStrLength As Integer, _
     i As Integer
     
-    aString = Trim(aString)
+    YourString = Trim(YourString)
     
     'Return immediately if already integer
-    If IsInt_NoTrailingSymbols(aString) Then
-        Truncate_Before_Int = aString
+    If IsInt_NoTrailingSymbols(YourString) Then
+        Truncate_Before_Int = YourString
         Exit Function
     End If
         
         CountCharsToRemove = 0
     
         'Loop to determine number of starting characters to remove
-        For i = 1 To Len(aString)
+        For i = 1 To Len(YourString)
         
-            'Single character string at point i in {aString}, e.g. "S" or "o"
-            CheckCharacter = Right(Left(aString, i), 1)
+            'Single character string at point i in {YourString}, e.g. "S" or "o"
+            CheckCharacter = Right(Left(YourString, i), 1)
                 
                 If IsInt_NoTrailingSymbols(CheckCharacter) = False Then
                     CountCharsToRemove = CountCharsToRemove + 1
@@ -1372,8 +1418,8 @@ Dim CountCharsToRemove As Integer, _
                 End If
         Next i
                     
-                    NewStrLength = Len(aString) - CountCharsToRemove
-                    Truncate_Before_Int = Right(aString, NewStrLength)
+                    NewStrLength = Len(YourString) - CountCharsToRemove
+                    Truncate_Before_Int = Right(YourString, NewStrLength)
                     
                     Exit Function
         
@@ -1382,7 +1428,7 @@ Truncate_Before_Int = vbNullString
 
 End Function
 
-Function Truncate_After_Int(ByVal aString As String)
+Function Truncate_After_Int(ByVal YourString As String)
 On Error GoTo NoInt:
 
 Dim CountCharsToRemove As Integer, _
@@ -1390,21 +1436,21 @@ Dim CountCharsToRemove As Integer, _
     NewStrLength As Integer, _
     i As Integer
     
-    aString = Trim(aString)
+    YourString = Trim(YourString)
     
     'Return immediately if already integer
-    If IsInt_NoTrailingSymbols(aString) Then
-        Truncate_After_Int = aString
+    If IsInt_NoTrailingSymbols(YourString) Then
+        Truncate_After_Int = YourString
         Exit Function
     End If
         
         CountCharsToRemove = 0
     
         'Loop to determine number of starting characters to remove
-        For i = 1 To Len(aString)
+        For i = 1 To Len(YourString)
         
-            'Single character string at point i in {aString}, e.g. "S" or "o"
-            CheckCharacter = Left(Right(aString, i), 1)
+            'Single character string at point i in {YourString}, e.g. "S" or "o"
+            CheckCharacter = Left(Right(YourString, i), 1)
                 
                 If IsNumeric(CheckCharacter) = False Then
                     CountCharsToRemove = CountCharsToRemove + 1
@@ -1413,8 +1459,8 @@ Dim CountCharsToRemove As Integer, _
                 End If
         Next i
             
-                    NewStrLength = Len(aString) - CountCharsToRemove
-                    Truncate_After_Int = Left(aString, NewStrLength)
+                    NewStrLength = Len(YourString) - CountCharsToRemove
+                    Truncate_After_Int = Left(YourString, NewStrLength)
                     
                     Exit Function
         
@@ -2583,117 +2629,6 @@ Dim PackagesList As String, _
         
 End Function
 
-Sub test()
-Dim DebugLoc As String
-    DebugLoc = DebugWrapScript(Get_HighComputeScript())
-End Sub
-
-Sub testwr()
-Dim Var As String
-
-Var = WriteLines("C:\Users\chris\Downloads\Debug.txt")
-
-
-End Sub
-
-Function WriteLines( _
-    TxtFile As String, _
-    Optional ToImmediate As Boolean = True, _
-    Optional ToClip As Boolean = True _
-)
-
-Dim SheetFX As Object: Set SheetFX = Application.WorksheetFunction
-Dim FileNum As Integer: FileNum = FreeFile
-Dim TxtFileLines() As String
-    
-    Open TxtFile For Input As FileNum
-        TxtFileLines = Split(Input$(LOF(FileNum), FileNum), vbNewLine)
-    Close FileNum
-
-Dim TxtFileContents As String
-    TxtFileContents = SheetFX.TextJoin(vbNewLine, False, TxtFileLines)
-    
-If ToImmediate = True Then
-    If MyOS() <> "Windows" Then
-        Debug.Print TxtFileContents
-    Else 'Use Regex if on Windows to replace illegal characters
-        Debug.Print _
-        Replace_Any( _
-            Of_Str:="”€âœ", _
-            With_Str:="-", _
-            Within_Str:=TxtFileContents _
-        )
-    End If
-End If
-
-If ToClip = True Then
-    Call Print_Named( _
-        IIf(Clipboard_Load(TxtFileContents) = True, _
-        "Output copied to clipboard.", _
-        "Output could not be copied to clipboard."), _
-        "Clipboard Status" _
-    )
-End If
-    
-Set SheetFX = Nothing
-End Function
-
-Function DebugWrapScript( _
-    ScriptContents As String, _
-    Optional DebugTxtName As String = "Debug", _
-    Optional DebugTxtDir As String = "Downloads" _
-)
-
-'{DebugTxtDir} should be a full path, but Optional parameters cannot be set to a function
-If DebugTxtDir = "Downloads" Then DebugTxtDir = Get_DownloadsPath() & PlatformFileSep()
-
-'Path to .R file that will generate {Path_DebugOutputTxt}
-Dim Path_DebugScript As String:  Path_DebugScript = DebugTxtDir & DebugTxtName & ".R"
-
-'Path to the .txt file that will be written into the .R file
-Dim Path_DebugOutputTxt As String:  Path_DebugOutputTxt = DebugTxtDir & DebugTxtName & ".txt"
-
-Dim SheetFX As Object: Set SheetFX = Application.WorksheetFunction
-Dim ArrayWrap As Variant
-
-'Write each line of the script to an array
-ArrayWrap = Array("DebugTxtPath <- r'(" & Path_DebugOutputTxt & ")'", _
-                  "file_connection <- file(DebugTxtPath)", _
-                  "sink(file_connection, append=TRUE)", _
-                  "sink(file_connection, append=TRUE, type='message')", _
-                  "message('NOTE: The look of messages are as follows:')", _
-                  "message('')", _
-                  "print('This was shown with print()')", _
-                  "message('This was shown with message()')", _
-                  "message('')", _
-                  "message('The R libraries for the user are located here:')", _
-                  "message(Sys.getenv('R_LIBS_USER'))", _
-                  "message('')", _
-                  "message(rep('=', 75))", _
-                  "message('The output of your script begins here')", _
-                  "message(rep('=', 75))", _
-                  "message('')", _
-                  ScriptContents, _
-                  "message('')", _
-                  "message(rep('=', 75))", _
-                  "message('The output of your script ends here')", _
-                  "message(rep('=', 75))", _
-                  "sink() # Stop recording console output", _
-                  "sink(type='message')")
-                
-'Join each item (line) of the ArrayWrap above into {ScriptContents}
-ScriptContents = SheetFX.TextJoin(vbNewLine, True, ArrayWrap)
-
-'Write the wrapped {ScriptContents}
-Open Path_DebugScript For Output As #1
-Print #1, ScriptContents
-Close #1
-
-'Run the wrapped {ScriptContents}
-DebugWrapScript = LocateRScript_Run(Path_DebugScript)
-
-End Function
-
 Sub TestRunRScript()
 Dim ResultCode As Integer, _
     ScriptContents As String
@@ -2732,35 +2667,99 @@ LocateRScript_Run = WinShell_RScript( _
                     )
 End Function
 
-Function WriteScript( _
-    TextContents As String, _
-    SaveToDir As String, _
-    Optional OverWrite As Boolean = False, _
-    Optional ScriptName As String = "Script.R" _
+Function CaptureScriptOutput( _
+    ScriptContents As String, _
+    Optional IncludeInfo As Boolean = False, _
+    Optional RScriptVisibility As String = "Minimized", _
+    Optional PreserveDebugFiles As Boolean = False _
 )
 
-'Add FileSep to directory string if required
-If Right(SaveToDir, 1) <> PlatformFileSep() Then SaveToDir = SaveToDir & PlatformFileSep()
+Dim DebugTxtDir As String: DebugTxtDir = Get_DownloadsPath() & PlatformFileSep()
+Dim DebugTxtName As String: DebugTxtName = "Debug"
 
-If OverWrite <> True Then
-    If Dir(SaveToDir & ScriptName) <> vbNullString Then
-        Dim i As Integer, SplitName As Variant, TryName As String
-        For i = 1 To 100
-            SplitName = Split(ScriptName, ".")
-            TryName = SplitName(0) & " (" & i & ")" & "." & SplitName(1)
-            If Dir(SaveToDir & TryName) = vbNullString Then
-                ScriptName = TryName
-                Exit For
-            End If
-        Next i
-    End If
+'...\Users\Downloads\Debug.R
+Dim Path_DebugScript As String: Path_DebugScript = DebugTxtDir & DebugTxtName & ".R"
+
+'...\Users\Downloads\Debug.txt
+Dim Path_DebugOutputTxt As String: Path_DebugOutputTxt = DebugTxtDir & DebugTxtName & ".txt"
+
+Dim SheetFX As Object: Set SheetFX = Application.WorksheetFunction
+Dim ArrayWrap As Variant
+
+'Encase {ScriptContents} in additional R code to capture output
+If IncludeInfo = False Then
+
+'Note that {Path_DebugOutputTxt} defined above is written into R
+ArrayWrap = Array("DebugTxtPath <- r'(" & Path_DebugOutputTxt & ")'", _
+                  "file_connection <- file(DebugTxtPath)", _
+                  "sink(file_connection, append=TRUE)", _
+                  "sink(file_connection, append=TRUE, type='message')", _
+                    ScriptContents, _
+                  "sink() # Stop recording console output", _
+                  "sink(type='message')")
+Else
+
+'Note that {Path_DebugOutputTxt} defined above is written into R
+ArrayWrap = Array("DebugTxtPath <- r'(" & Path_DebugOutputTxt & ")'", _
+                  "file_connection <- file(DebugTxtPath)", _
+                  "sink(file_connection, append=TRUE)", _
+                  "sink(file_connection, append=TRUE, type='message')", _
+                  "message('NOTE: The look of messages are as follows:')", "message('')", _
+                  "print('This was shown with print()')", _
+                  "message('This was shown with message()')", "message('')", _
+                  "message('The R libraries for the user are located here:')", _
+                  "message(Sys.getenv('R_LIS_USER'))", "message('')", _
+                  "TimeStamp <- Sys.time()", _
+                  "message(rep('=', 75))", _
+                  "message(paste0('The output of your script begins here (', format(Sys.time(), '%b %d %X'), ')'))", _
+                  "message(rep('=', 75))", _
+                  "message('')", _
+                    ScriptContents, _
+                  "message('')", _
+                  "message(rep('=', 75))", _
+                  "message(paste0('The output of your script ends here (', format(Sys.time(), '%b %d %X'), ')'))", _
+                  "message(rep('=', 75))", _
+                  "message('Run Successful')", _
+                  "message('Time Elapsed: ', round(difftime(Sys.time(), TimeStamp, units = 'secs'), 0), ' seconds')", _
+                  "sink() # Stop recording console output", _
+                  "sink(type='message')")
 End If
 
-Open SaveToDir & ScriptName For Output As #1
-Print #1, TextContents
+'Join each item (line) of the ArrayWrap above into {ScriptContents}
+ScriptContents = SheetFX.TextJoin(vbNewLine, True, ArrayWrap)
+
+'Write {ScriptContents} to a .R file after it has been wrapped in output capture commands
+Open Path_DebugScript For Output As #1
+Print #1, ScriptContents
 Close #1
 
-WriteScript = CStr(SaveToDir & ScriptName)
+'Run the {ScriptContents}, which will also write a text file to the downloads folder
+Dim WinShellResult As Integer
+    WinShellResult = WinShell_RScript( _
+                        RScriptExe_Path:=Get_RScriptExePath(), _
+                        Script_Path:=Path_DebugScript, _
+                        VisibilityStyle:=RScriptVisibility _
+                    )
+
+If IncludeInfo = True And WinShellResult = 1 Then
+    Print_Named "Shell Failed To Run"
+End If
+
+'After Rscript has finished running, and writing the text file, read it
+CaptureScriptOutput = ReadLines( _
+                        TxtFile:=Path_DebugOutputTxt, _
+                        ToImmediate:=True, _
+                        ToClipboard:=False, _
+                        Replace_AnyOf:="”€âœ", _
+                        Replace_With:="-" _
+                    ) 'Replace tidyverse characters loaded incorrectly
+
+'Delete the debug files
+If PreserveDebugFiles <> True Then
+    Call Kill(Path_DebugScript)
+    Call Kill(Path_DebugOutputTxt)
+End If
+                    
 End Function
 
 Function Apple_RScript( _
