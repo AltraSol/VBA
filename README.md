@@ -1,5 +1,5 @@
 
-#  SimplifyVBA ¬ github.com/ulchc (10-17-22)
+#  QuickStartVBA ¬ github.com/ulchc (10-17-22)
 
 *repo currently under maintenance for restructuring*
 
