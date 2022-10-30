@@ -4,8 +4,7 @@
 
 ## Overview 
 
-A reasonably well documented collection of generic functions and subs for
-each action I had to implement in VBA more than once.
+A collection of generic functions and subs for every action I had to implement in VBA more than once.
 
 Prefix ƒ— denotes a function which has a notable load time or file interactions
 outside ThisWorkbook. Since the intent of the QuickStartVBA module is to quickly
