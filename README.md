@@ -12,11 +12,11 @@ outside ThisWorkbook. Since the intent of the QuickStartVBA module/repo is to qu
 port in many *potentially* useful snippets of code to build off of in a more specific secondary
 module, no functions are by default Private Functions, and this prefix is used instead.
 
- - [Sections](#quickstartvba---githubcom-ulchc--10-29-22-)
- * [Functions](#functions)
- * [Subs](https://github.com/ulchc/QuickStartVBA/blob/main/README.md#subs)
- * [Data Transformation](https://github.com/ulchc/QuickStartVBA/blob/main/README.md#data-transformation)
- * [User Interface](https://github.com/ulchc/QuickStartVBA/blob/main/README.md#user-interface)
+- [Sections](#quickstartvba---githubcom-ulchc--10-29-22-)
+  * [Functions](#functions)
+  * [Subs](https://github.com/ulchc/QuickStartVBA/blob/main/README.md#subs)
+  * [Data Transformation](https://github.com/ulchc/QuickStartVBA/blob/main/README.md#data-transformation)
+  * [User Interface](https://github.com/ulchc/QuickStartVBA/blob/main/README.md#user-interface)
 
 
 ##  Important
