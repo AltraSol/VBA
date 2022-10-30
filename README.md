@@ -8,9 +8,10 @@
 A collection of generic functions and subs for every action I had to implement in VBA more than once.
 
 Prefix ƒ— denotes a function which has a notable load time or file interactions
-outside ThisWorkbook. Since the intent of the QuickStartVBA module/repo is to quickly
-port in many *potentially* useful snippets of code to build off of in a more specific secondary
-module, no functions are by default Private Functions, and this prefix is used instead.
+outside ThisWorkbook. Since my intended use of the QuickStartVBA module/repo was to quickly
+port in many potentially useful snippets of code, then build onto a secondary module for 
+a specific use case, I've opted to use this non-common chracter prefix instead of using 
+Private Functions so that functions are available in any module.
 
 #### Sections
   * [Functions](#functions)
