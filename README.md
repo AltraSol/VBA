@@ -12,11 +12,11 @@ outside ThisWorkbook. Since the intent of the QuickStartVBA module/repo is to qu
 port in many *potentially* useful snippets of code to build off of in a more specific secondary
 module, no functions are by default Private Functions, and this prefix is used instead.
 
-- [Sections](#quickstartvba---githubcom-ulchc--10-29-22-)
-  * [Functions](#functions)
-  * [Subs](https://github.com/ulchc/QuickStartVBA/blob/main/README.md#subs)
-  * [Data Transformation](https://github.com/ulchc/QuickStartVBA/blob/main/README.md#data-transformation)
-  * [User Interface](https://github.com/ulchc/QuickStartVBA/blob/main/README.md#user-interface)
+ - [Sections](#quickstartvba---githubcom-ulchc--10-29-22-)
+ * [Functions](#functions)
+ * [Subs](https://github.com/ulchc/QuickStartVBA/blob/main/README.md#subs)
+ * [Data Transformation](https://github.com/ulchc/QuickStartVBA/blob/main/README.md#data-transformation)
+ * [User Interface](https://github.com/ulchc/QuickStartVBA/blob/main/README.md#user-interface)
 
 
 ##  Important
@@ -24,13 +24,13 @@ module, no functions are by default Private Functions, and this prefix is used i
 
 If you intend to use the User Interface section, the following sub must be placed within ThisWorkbook:
 
- VBA
+``` VBA
 Private Sub Workbook_BeforeClose(Cancel As Boolean)
    Call Remove_TempMenuCommands
    Call Remove_TempMenuCommandSections
 End Sub
-
- VBA
+```
+``` VBA
 Public GlobalTempMenuCommands() As Variant
 Public GlobalTempMenuSections() As Variant
 
@@ -39,30 +39,30 @@ Public GlobalTempMenuSections() As Variant
 '    Temporary:=True property. Allows for the deletion of all user
 '    created menus or menu items on the Workbook_BeforeClose() event.
 
-
+```
 
 ##  Functions
 
- VBA
+``` VBA
   Get_Username()
 
 '   Returns username by reading the environment variable.
 
-
- VBA
+```
+``` VBA
   Get_DesktopPath()
 
 '   Returns the desktop path regardless of platform with handling
 '   for OneDrive hosted desktops.
 
-
- VBA
+```
+``` VBA
   Get_DownloadsPath()
 
 '   Returns the desktop path regardless of platform.
 
-
- VBA
+```
+``` VBA
  Get_LatestFile( _
      FromFolder As String, _
      MatchingString As String, _
@@ -72,20 +72,20 @@ Public GlobalTempMenuSections() As Variant
 '   Returns the latest file of the specified {FileType} with a name
 '   that includes {MatchingString} from the directory {FromFolder}.
 
-
- VBA
+```
+``` VBA
  ListFiles(FromFolder As String)
 
 '   Returns an array of all file paths located in {FromFolder}
 
-
- VBA
+```
+``` VBA
  ListFolders(FromFolder As String)
 
 '   Returns an array of all file paths located in {FromFolder}
 
-
- VBA
+```
+``` VBA
  CopySheets_FromFolder( _
      FromFolder As String, _
      Optional Copy_xlsx As Boolean, _
@@ -100,8 +100,8 @@ Public GlobalTempMenuSections() As Variant
     Dim CopiedSheets(): CopiedSheets() = CopySheets_FromFolder(...)
     Sheets(CopiedSheets(1)).Activate
 
-
- VBA
+```
+``` VBA
  PasteSheetVals_FromFolder( _
      FromFolder As String, _
      Optional Copy_xlsx As Boolean, _
@@ -117,20 +117,20 @@ Public GlobalTempMenuSections() As Variant
     Dim PastedSheets(): PastedSheets() = PasteSheetVals_FromFolder(...)
     Sheets(PastedSheets(1)).Activate
 
-
- VBA
+```
+``` VBA
  Clipboard_IsRange()
 
 '   Returns True if a range is currently copied.
 
-
- VBA
+```
+``` VBA
   Clipboard_Load(ByVal YourString As String)
 
 '   Stores {YourString} in clipboard.
 
-
- VBA
+```
+``` VBA
  ƒ—Clipboard_Read( _
      Optional IfRngConcatAllVals As Boolean = True, _
      Optional Sep As String = ", " _
@@ -138,15 +138,15 @@ Public GlobalTempMenuSections() As Variant
 
 '   Returns text from the copied object (clipboard text or range).
 
-
- VBA
+```
+``` VBA
   ƒ—Get_CopiedRangeVals()
 
 '   If range copied, checks each Cell.Value in the range and
 '   returns an array of each non-blank value.
 
-
- VBA
+```
+``` VBA
  CopySheets_FromFile(FromFile As String)
 
 '   Opens {FromFile}, copies all sheets within it to ThisWorkbook,
@@ -155,8 +155,8 @@ Public GlobalTempMenuSections() As Variant
     Dim CopiedSheets(): CopiedSheets() = CopySheets_FromFile(...)
     Sheets(CopiedSheets(1)).Activate
 
-
- VBA
+```
+``` VBA
  PasteSheetVals_FromFile(FromFile As String)
 
 '   Opens {FromFile}, pastes cell values from all sheets within it
@@ -165,8 +165,8 @@ Public GlobalTempMenuSections() As Variant
     Dim PastedSheets(): PastedSheets() = PasteSheetVals_FromFile(...)
     Sheets(PastedSheets(1)).Activate
 
-
- VBA
+```
+``` VBA
  Get_FilesMatching( _
      FromFolder As String, _
      MatchingString As String, _
@@ -176,8 +176,8 @@ Public GlobalTempMenuSections() As Variant
 '   Returns an array of file paths located in {FromFolder} which have
 '   a file name containing {MatchingString} and a specific {FileType}.
 
-
- VBA
+```
+``` VBA
  RenameSheet( _
      CurrentName As String, _
      NewName As String, _
@@ -192,8 +192,8 @@ Public GlobalTempMenuSections() As Variant
 '   exists, it will be deleted and Sheets({CurrentName}).Name will
 '   always be set to {NewName}.
 
-
- VBA
+```
+``` VBA
  Tabs_MatchingCodeName( _
      MatchCodeName As String, _
      ExcludePerfectMatch As Boolean _
@@ -202,8 +202,8 @@ Public GlobalTempMenuSections() As Variant
 '   An array of tab names where {MatchCodeName} is within the CodeName
 '   property (useful for detecting copies of a code-named template).
 
-
- VBA
+```
+``` VBA
  WorksheetExists( _
      aName As String, _
      Optional wb As Workbook _
@@ -211,8 +211,8 @@ Public GlobalTempMenuSections() As Variant
 
 '   True or False dependent on if tab name {aName} already exists.
 
-
- VBA
+```
+``` VBA
  ƒ—Delete_FileAndFolder(ByVal aFilePath As String) as Boolean
 
 '   Use with caution. Deletes the file supplied {aFilePath}, all
@@ -222,21 +222,21 @@ Public GlobalTempMenuSections() As Variant
 '   within the Desktop or Documents directory, or if the directory
 '   is considered high level (it's within the user directory).
 
-
- VBA
+```
+``` VBA
  PlatformFileSep()
 
 '   Returns "\" or "/" depending on the operating system.
 
-
- VBA
+```
+``` VBA
   MyOS()
 
 '   Read the system environment OS variable and returns "Windows",
 '   "Mac", or the unaltered Environ("OS") output if neither.
 
-
- VBA
+```
+``` VBA
 NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
  Replace_SpecialChars( _
@@ -249,8 +249,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   Replaces `!@#$%^&“”*(")-=+{}\/?:;'.,<> from {YourString} with
 '   {Replacement}.
 
-
- VBA
+```
+``` VBA
 NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
  Function Replace_Any( _
@@ -266,8 +266,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
     Debug.Print Replace_Any(" '. ", "_", "Here's an example.")
 
-
- VBA
+```
+``` VBA
  ExtractFirstInt_RightToLeft (aVariable)
 
 '   Returns the first integer found in a string when searcing
@@ -275,8 +275,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
     ExtractFirstInt_RightToLeft("Some12Embedded345Num") = "345"
 
-
- VBA
+```
+``` VBA
  ExtractFirstInt_LeftToRight (aVariable)
 
 '   Returns the first integer found in a string when searcing
@@ -284,24 +284,24 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
     ExtractFirstInt_LeftToRight("Some12Embedded345Num") = "12"
 
-
- VBA
+```
+``` VBA
  Truncate_Before_Int (YourString)
 
 '   Removes characters before first integer in a sequence of characters.
 
     Truncate_After_Int("Some12Embedded345Num") = "12Embedded345Num"
 
-
- VBA
+```
+``` VBA
  Truncate_After_Int (YourString)
 
 '   Removes characters after first integer in a sequence of characters.
 
     Truncate_After_Int("Some12Embedded345Num") = "Some12Embedded345"
 
-
- VBA
+```
+``` VBA
  IsInt_NoTrailingSymbols (aNumeric)
 
 '   Checks if supplied value is both numeric, and contains no numeric
@@ -310,11 +310,11 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   IsInt_NoTrailingSymbols(9999) = True
 '   IsInt_NoTrailingSymbols(9999,) = False
 
-
+```
 
 ## Subs
 
- VBA
+``` VBA
  ReDim_Add(ByRef aArr() As Variant, ByVal aVal)
 
 '    Simplifies the addition of a value to a one dimensional array by
@@ -322,8 +322,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
      Call ReDim_Add(aArr(), aVal) '-> last element of aArr() now aVal
 
-
- VBA
+```
+``` VBA
  ReDim_Rem(ByRef aArr() As Variant)
 
 '    Simplifies the sequential removal of the last element of a one
@@ -332,8 +332,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
      Call ReDim_Rem(aArr()) '-> last element of aArr() has been removed
 
-
- VBA
+```
+``` VBA
  SaveToDownloads( _
     SaveTabNamed As String, _
     AsFileNamed As String, _
@@ -349,8 +349,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '    (n) will automatically be added to the file name if it is
 '    already taken.
 
-
- VBA
+```
+``` VBA
  SaveToDownloads_Multiple( _
     SaveTabsNamed_Array As Variant, _
     AsFileNamed As String, _
@@ -361,34 +361,34 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '    Operates the same as SaveToDownloads() but takes an array of
 '    tab names.
 
-
- VBA
+```
+``` VBA
  MergeAndCombine(MergeRange As Range, Optional SepValsByNewLine = True)
 
 '    Concatenates each Cell.Value in a range & merges range as opposed
 '    to Merge & Center which only keeps a single value
 
-
- VBA
+```
+``` VBA
  AutoAdjustZoom(rngBegin As Range, rngEnd As Range)
 
 '   Adjusts user view to the width of rngBegin to rngEnd
 
-
- VBA
+```
+``` VBA
  LaunchLink (aLink)
 
 '   Launches aLink in existing browser with error handling for
 '   invalid Links
 
-
- VBA
+```
+``` VBA
  ToggleDisplayMode()
 
 '   Toggles display of ribbon, formula bar, status bar & headings
 
-
- VBA
+```
+``` VBA
  CreateSlicer( _
      tblKeyAddress As String, _
      ColumnName As String, _
@@ -409,8 +409,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   {HorizAlignRight} = True and the top left corner when
 '   {HorizAlignRight} = False.
 
-
- VBA
+```
+``` VBA
  HorizAlignShape( _
      ShapeObject As Object, _
      AlignToRange As Range, _
@@ -420,21 +420,21 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   Written for use in CreateSlicer(), but can be used to
 '   skip the calculations involved to right align any shape.
 
-
- VBA
+```
+``` VBA
  Get_AvenirSlicerStyle()
 
 '   Creates the .TableStyle "AvenirSlicerStyle" for CreateSlicer().
 
-
- VBA
+```
+``` VBA
  TableStyleExists(StyleNamed As String)
 
 '   Returns True or False depending on if .TableStyle({StyleNamed})
 '   exists.
 
-
- VBA
+```
+``` VBA
  Create_Comment( _
      rngComment As Range, _
      arrTextLines As Variant, _
@@ -471,37 +471,37 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   Point 1
 '   Point 2
 
-
- VBA
+```
+``` VBA
  Get_AspectRatio(ImgPath As String)
 
 '   Written for use in Create_Comment(), but will return the aspect
 '   ratio (width / height) for any image.
 
-
- VBA
+```
+``` VBA
  PrintEnvironVariables()
 
 '   Print the environment variables to the Immediate window.
 
-
- VBA
+```
+``` VBA
  Print_Named(Something, Optional Label)
 
 '   Uses Debug.Print to add a space between each {Something} printed,
 '   labels each {Something} if {Label} supplied.
 
-
- VBA
+```
+``` VBA
  Print_Pad()
 
 '   Uses Debug.Print to print a timestamped seperator of "======"
 
-
+```
 
 ## Data Transformation
 
- VBA
+``` VBA
  Filter_By( _
      rngColumn As Range, _
      AdvFilterTerm As String, _
@@ -514,8 +514,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   {AdvFilterTerm} applied to {rngColumn}, then overwriting the
 '   previous range or ListObject with the filtered result.
 
-
- VBA
+```
+``` VBA
  Order_by( _
      rngColumn As Range, _
      Optional Descending As Boolean = True _
@@ -523,8 +523,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
 '   Self-explanatory simplification of .Sort on a table.
 
-
- VBA
+```
+``` VBA
  Pivot_Wider( _
      rngTable As Range, _
      NamesFrom As String, _
@@ -548,8 +548,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   Works similarily to dplyr pivot_wider() in R, with the original
 '   columns removed after the pivot.
 
-
- VBA
+```
+``` VBA
  ColumnSub( _
      rngColumn As Range, _
      strSubstitute As String, _
@@ -559,8 +559,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   Subsitutes each occurance of {strSubstitute} with {strReplacement}
 '   for all values in {rngColumn}.
 
-
- VBA
+```
+``` VBA
  Drop_Columns( _
      rngTable As Range, _
      strMatch As String, _
@@ -570,8 +570,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   Deletes any column with a header matching {strMatch} in {rngTable},
 '   with optional parameter {PerfectMatch} to adjust match precision.
 
-
- VBA
+```
+``` VBA
  Set_MinColWidth( _
      rngTable As Range, _
      MinWidth As Single, _
@@ -582,8 +582,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   wide, with optional parameter {OverrideAll} to reset all widths
 '   to {MinWidth}.
 
-
- VBA
+```
+``` VBA
  Split_ColumnValues( _
      rngColumn As Range, _
      SplitTerm As String, _
@@ -593,8 +593,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   Splits the values in {rngColumn} by {SplitTerm} and substitutes
 '   column values with the split index specified: {SplitKeepIndex}.
 
-
- VBA
+```
+``` VBA
  Reorder_Columns( _
      Named As Variant, _
      FromTable As Range, _
@@ -610,8 +610,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   Note: {ToLocation} is not Optional. The default value is simply
 '   a means to make the choice values visible when calling the sub.
 
-
- VBA
+```
+``` VBA
  Filter_Dupes( _
      FromColsNamed As Variant, _
      rngTable As Range _
@@ -621,8 +621,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   across all the columns specified in {FromColsNamed}, then
 '   overwrites the original table with the filtered result.
 
-
- VBA
+```
+``` VBA
  Overwrite_Table( _
      tblCurrent As Range, _
      tblNew As Range _
@@ -633,8 +633,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
 '   Note: Column dimensions must be the same (Excel table compatability)
 
-
- VBA
+```
+``` VBA
  Fast_Copy( _
      rngToCopy As Range, _
      Optional rngOutput As Range _
@@ -644,29 +644,29 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   {rngToCopy} to the right of itself. If [rngOutput} is specified,
 '   the default output location will be overridden.
 
-
- VBA
+```
+``` VBA
  Get_FirstRow(rngFrom As Range)
 
 '   Returns the first row of a given range.
 
-
- VBA
+```
+``` VBA
  Get_LastRow(rngFrom As Range)
 
 '   Returns the last row of a given range.
 
-
- VBA
+```
+``` VBA
  Get_LastColumn(rngFrom As Range)
 
 '   Returns the last column of a given range.
 
-
+```
 
 ##  User Interface
 
- VBA
+``` VBA
  ConvertStrCommand( _
      CommandString As String, _
      Optional Verbose As Boolean = True _
@@ -687,8 +687,8 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   Original:   "MySub(Range{'NamedRange'}, 2)"
 '   Converted: "'MySub(Range("NamedRange"), 2)'"
 
-
- VBA
+```
+``` VBA
  ChangeMenuVisibility( _
      MenuItems_Array As Variant, _
      VisibleProperty As Boolean _
@@ -706,15 +706,15 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '   All visibility modifications can be returned to default by
 '   calling ResetCellMenu()
 '
-
- VBA
+```
+``` VBA
  ResetCellMenu()
 
 '   Restores CommandBars("Cell") and ShortcutMenus(xlWorksheetCell)
 '   to their default states.
 
-
- VBA
+```
+``` VBA
  CreateMenuCommand( _
     MenuCommandName As String, _
     StrCommand As String, _
@@ -736,8 +736,8 @@ EXPLANATION:
 
 EXAMPLES: '(Ctrl+f to view & run)
      Sub Try_CreateMenuCommand()
-
- VBA
+```
+``` VBA
  CreateMenuSection( _
     MenuSectionName As String, _
     Array_SectionMenuNames As Variant, _
@@ -763,8 +763,8 @@ EXPLANATION:
 
 EXAMPLES: '(Ctrl+f to view & run)
      Sub Try_CreateMenuSection()
-
- VBA
+```
+``` VBA
 NOTE: Popup menus are Windows only
 
  CreatePopupMenu( _
@@ -795,8 +795,8 @@ EXPLANATION:
 EXAMPLES: '(Ctrl+f to view & run)
      Sub Try_CreatePopupMenu()
      Sub Try_CreatePopupMenuColorful()
-
- VBA
+```
+``` VBA
  CreateAddInButtons( _
     ButtonSectionName As String, _
     ButtonNames_Array As Variant, _
@@ -831,8 +831,8 @@ EXAMPLES: '(Ctrl+f to view & run)
      Sub Try_CreateAddInButtons_Type1()
      Sub Try_CreateAddInButtons_Type2()
      Sub Try_CreateAddInButtons_Type3()
-
- VBA
+```
+``` VBA
  CreateButtonShape( _
     Optional StrCommand As String, _
     Optional btnLabel As String = "Blank Button", _
@@ -861,8 +861,8 @@ EXPLANATION:
 
 EXAMPLES: '(Ctrl+f to view & run)
      Sub Try_CreateButtonShape()
-
- VBA
+```
+``` VBA
  IdentifyMenus(Optional RemoveIndicators As Boolean = False)
 
 '   Loops through each CommandBar in the workbook and adds a
@@ -872,3 +872,5 @@ EXAMPLES: '(Ctrl+f to view & run)
 '   This is simply to enable the modification of CommandBars other
 '   than the worksheet cell menus (ex. ListObject), which aren't
 '   often named in an intuitive way.
+
+```
