@@ -806,7 +806,6 @@ EXAMPLES: '(Ctrl+f to view & run)
     Optional MenuFaceIDs_Array As Variant, _
     Optional Temporary As Boolean = True _
  )
-
 PARAMETERS:
 '    {ButtonSectionName} = Name of the row added to the Add-ins ribbon (visible on hover).
 '    {ButtonNames_Array} = Array of names for each command (visible on hover).
