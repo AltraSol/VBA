@@ -4,7 +4,7 @@ Option Explicit
 'TODO: finish documenting (ctrl+f ooooooooooooooooooooooooooooooooooooooooo)
 '
 '===============================================================================================================================================================================================================================================================
-'#  QuickStartVBA ¨ github.com/ulchc (10-29-22)
+'#  QuickStartVBA ¬¨ github.com/ulchc (10-29-22)
 '===============================================================================================================================================================================================================================================================
 '===============================================================================================================================================================================================================================================================
 '## Overview
@@ -13,7 +13,7 @@ Option Explicit
 'A reasonably well documented collection of generic functions and subs for
 'each action I had to implement in VBA more than once.
 '
-'Prefix Éó denotes a function which has a notable load time or file interactions
+'Prefix ∆í‚Äî denotes a function which has a notable load time or file interactions
 'outside ThisWorkbook. Since the intent of the QuickStartVBA module is to quickly
 'port in many *potentially* useful snippets of code to use in a more specific secondary
 'module, no functions are by default Private Functions, and this prefix is used instead.
@@ -132,7 +132,7 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-' ÉóClipboard_Read( _
+' ∆í‚ÄîClipboard_Read( _
 '     Optional IfRngConcatAllVals As Boolean = True, _
 '     Optional Sep As String = ", " _
 ' )
@@ -141,7 +141,7 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  ÉóGet_CopiedRangeVals()
+'  ∆í‚ÄîGet_CopiedRangeVals()
 '
 ''   If range copied, checks each Cell.Value in the range and
 ''   returns an array of each non-blank value.
@@ -214,7 +214,7 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-' ÉóDelete_FileAndFolder(ByVal aFilePath As String) as Boolean
+' ∆í‚ÄîDelete_FileAndFolder(ByVal aFilePath As String) as Boolean
 '
 ''   Use with caution. Deletes the file supplied {aFilePath}, all
 ''   files in the same folder, and the directory itself.
@@ -247,7 +247,7 @@ Public GlobalTempMenuSections() As Variant
 '     Optional TrimWS As Boolean _
 ' )
 '
-''   Replaces `!@#$%^&ìî*(")-=+{}\/?:;'.,<> from {YourString} with
+''   Replaces `!@#$%^&‚Äú‚Äù*(")-=+{}\/?:;'.,<> from {YourString} with
 ''   {Replacement}.
 '
 '----------------------------------------------------------------```
@@ -743,7 +743,7 @@ With Regex
     .Global = ReplaceAll
     .MultiLine = True
     .IgnoreCase = False
-    .Pattern = "[" & "`!@#$%^&ìî*(" & Chr(34) & ")-=+{}\/?:;'.,<>" & "]"
+    .Pattern = "[" & "`!@#$%^&‚Äú‚Äù*(" & Chr(34) & ")-=+{}\/?:;'.,<>" & "]"
 End With
 
     YourString = Regex.Replace(YourString, Replacement)
@@ -1224,7 +1224,7 @@ On Error GoTo -1
 
 End Function
 
-Function ÉóClipboard_Read( _
+Function ∆í‚ÄîClipboard_Read( _
     Optional IfRngConcatAllVals As Boolean = True, _
     Optional Sep As String = ", " _
 )
@@ -1232,26 +1232,26 @@ On Error GoTo NoRead
 
 If Clipboard_IsRange() = True Then
     Dim CopiedRangeText As Variant
-        CopiedRangeText = ÉóGet_CopiedRangeVals()
+        CopiedRangeText = ∆í‚ÄîGet_CopiedRangeVals()
         
         If IfRngConcatAllVals = False Then
-            ÉóClipboard_Read = CopiedRangeText(LBound(CopiedRangeText))
+            ∆í‚ÄîClipboard_Read = CopiedRangeText(LBound(CopiedRangeText))
         Else
-            ÉóClipboard_Read = Application.WorksheetFunction.TextJoin(Sep, True, CopiedRangeText)
+            ∆í‚ÄîClipboard_Read = Application.WorksheetFunction.TextJoin(Sep, True, CopiedRangeText)
         End If
         
 Else
-    ÉóClipboard_Read = CreateObject("HTMLFile").ParentWindow.ClipboardData.GetData("text")
+    ∆í‚ÄîClipboard_Read = CreateObject("HTMLFile").ParentWindow.ClipboardData.GetData("text")
 End If
 
 Exit Function
 
 NoRead:
-ÉóClipboard_Read = False
+∆í‚ÄîClipboard_Read = False
 On Error GoTo -1
 End Function
 
-Function ÉóGet_CopiedRangeVals()
+Function ∆í‚ÄîGet_CopiedRangeVals()
 
 If Application.ScreenUpdating = True Then Application.ScreenUpdating = False
 If Application.DisplayAlerts = True Then Application.DisplayAlerts = False
@@ -1276,7 +1276,7 @@ Dim aCell As Range, _
             'To reverse final ReDim after the last aCell added
             ReDim Preserve arrCellText(UBound(arrCellText()) - 1)
                 
-                ÉóGet_CopiedRangeVals = arrCellText()
+                ∆í‚ÄîGet_CopiedRangeVals = arrCellText()
 PasteIssue:
                 ActiveSheet.Delete
                        
@@ -1532,7 +1532,7 @@ NotInt:
 IsInt_NoTrailingSymbols = False
 End Function
 
-Function ÉóDelete_FileAndFolder(ByVal aFilePath As String) As Boolean
+Function ∆í‚ÄîDelete_FileAndFolder(ByVal aFilePath As String) As Boolean
 
 On Error GoTo NoDelete
 
@@ -1561,18 +1561,18 @@ If InStr(1, aFilePath, ".") = 0 Then GoTo NoDelete
 If Dir(ContainerFolder, vbDirectory) = "" Then GoTo NoDelete
 
 If Right(ContainerFolder, Len(Slash & "Desktop" & Slash)) = (Slash & "Desktop" & Slash) Then
-    Debug.Print "!!WARNING!! Path supplied to ÉóDelete_FileAndFolder() would delete all files in your Desktop folder"
+    Debug.Print "!!WARNING!! Path supplied to ∆í‚ÄîDelete_FileAndFolder() would delete all files in your Desktop folder"
     GoTo NoDelete
 End If
 
 If Right(ContainerFolder, Len(Slash & "Documents" & Slash)) = (Slash & "Documents" & Slash) Then
-    Debug.Print "!!WARNING!! Path supplied to ÉóDelete_FileAndFolder() would delete all files in your Documents folder"
+    Debug.Print "!!WARNING!! Path supplied to ∆í‚ÄîDelete_FileAndFolder() would delete all files in your Documents folder"
     GoTo NoDelete
 End If
 
 If Len(ContainerFolder) - Len(Replace(ContainerFolder, Slash, "")) <= 4 Then
     Debug.Print Len(ContainerFolder) - Len(Replace(ContainerFolder, "/", ""))
-    Debug.Print "!!WARNING!! Path supplied to ÉóDelete_FileAndFolder() is a high level folder that could delete many files"
+    Debug.Print "!!WARNING!! Path supplied to ∆í‚ÄîDelete_FileAndFolder() is a high level folder that could delete many files"
     GoTo NoDelete
 End If
     
@@ -1580,11 +1580,11 @@ End If
     RmDir ContainerFolder
     Debug.Print ContainerFolder & " and all files within it deleted."
 
-        ÉóDelete_FileAndFolder = True
+        ∆í‚ÄîDelete_FileAndFolder = True
         Exit Function
 
 NoDelete:
-ÉóDelete_FileAndFolder = False
+∆í‚ÄîDelete_FileAndFolder = False
             
 End Function
 
@@ -3401,7 +3401,7 @@ End Function
 '### Legal Special Character Reference
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-' ∂ Ä ß ÿ µ ™ ∞ π ≤ ≥ ∑ ï ø ° É ◊ § ª ´ á ¶ ± ˜ ® Ø ó ¨
+' ¬∂ ‚Ç¨ ¬ß √ò ¬µ ¬™ ¬∞ ¬π ¬≤ ¬≥ ¬∑ ‚Ä¢ ¬ø ¬° ∆í √ó ¬§ ¬ª ¬´ ‚Ä° ¬¶ ¬± √∑ ¬® ¬Ø ‚Äî ¬¨
 
 'https://homepage.cs.uri.edu/faculty/wolfe/book/Readings/R02%20Ascii/completeASCII.htm
 
