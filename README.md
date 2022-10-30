@@ -10,7 +10,7 @@ A collection of generic functions and subs for every action I had to implement i
 Prefix ƒ— denotes a function which has a notable load time or file interactions
 outside ThisWorkbook. Since my intended use of the QuickStartVBA module/repo was to quickly
 port in many potentially useful snippets of code, then build onto a secondary module for 
-a specific use case, I've opted to use this non-common chracter prefix instead of using 
+a specific use case, I've opted to use this uncommon character prefix instead of using 
 Private Functions so that functions are available in any module.
 
 #### Sections
