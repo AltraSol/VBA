@@ -1,29 +1,30 @@
 
-#  QuickStartVBA ¬ github.com/ulchc (10-17-22)
+#  QuickStartVBA ¬ github.com/ulchc (10-29-22)
 
-*repo currently under maintenance for restructuring*
 
-A collection of code to interface R with VBA, make application building easier, or improve VBA readability.
+## Overview
 
-Prefix: ƒ— denotes a function which has a notable load time or file interactions outside ThisWorkbook. Only use these within the VBA IDE.
+
+A reasonably well documented collection of generic functions and subs for
+each action I had to implement in VBA more than once.
+
+Prefix ƒ— denotes a function which has a notable load time or file interactions
+outside ThisWorkbook. Since the intent of the QuickStartVBA module is to quickly
+port in many *potentially* useful snippets of code to use in a more specific secondary
+module, no functions are by default Private Functions, and this prefix is used instead.
+
 
 ##  Important
 
 
-#### If you intend to use the User Interface section, the following sub must be placed within ThisWorkbook:
+#### If you intend to use the User Interface section, the following sub
+must be placed within ThisWorkbook:
 
 ``` VBA
    Private Sub Workbook_BeforeClose(Cancel As Boolean)
        Call Remove_TempMenuCommands
        Call Remove_TempMenuCommandSections
    End Sub
-```
-``` VBA
-Public GlobalUser As String
-
-'   Prevents needless rerunning of the file search component of
-'   Get_WindowsUsername() once the local user has been determined.
-
 ```
 ``` VBA
 Public GlobalTempMenuCommands() As Variant
@@ -41,19 +42,20 @@ Public GlobalTempMenuSections() As Variant
 ``` VBA
   Get_Username()
 
-'   Returns username regardless of Windows or Mac OS.
+'   Returns username by reading the environment variable.
 
 ```
 ``` VBA
   Get_DesktopPath()
 
-'   Returns Mac or Windows desktop directory (even if on OneDrive).
+'   Returns the desktop path regardless of platform with handling
+'   for OneDrive hosted desktops.
 
 ```
 ``` VBA
   Get_DownloadsPath()
 
-'   Returns Mac or Windows downloads directory (even if on OneDrive).
+'   Returns the desktop path regardless of platform.
 
 ```
 ``` VBA
@@ -69,6 +71,12 @@ Public GlobalTempMenuSections() As Variant
 ```
 ``` VBA
  ListFiles(FromFolder As String)
+
+'   Returns an array of all file paths located in {FromFolder}
+
+```
+``` VBA
+ ListFolders(FromFolder As String)
 
 '   Returns an array of all file paths located in {FromFolder}
 
@@ -113,9 +121,9 @@ Public GlobalTempMenuSections() As Variant
 
 ```
 ``` VBA
-  Clipboard_Load(ByVal aString As String)
+  Clipboard_Load(ByVal YourString As String)
 
-'   Stores {aString} in clipboard.
+'   Stores {YourString} in clipboard.
 
 ```
 ``` VBA
@@ -201,7 +209,7 @@ Public GlobalTempMenuSections() As Variant
 
 ```
 ``` VBA
-  ƒ—Delete_FileAndFolder(ByVal aFilePath As String) as Boolean
+ ƒ—Delete_FileAndFolder(ByVal aFilePath As String) as Boolean
 
 '   Use with caution. Deletes the file supplied {aFilePath}, all
 '   files in the same folder, and the directory itself.
@@ -209,20 +217,6 @@ Public GlobalTempMenuSections() As Variant
 '   Will exit the deletion procedure if {aFilePath} is a file
 '   within the Desktop or Documents directory, or if the directory
 '   is considered high level (it's within the user directory).
-
-```
-``` VBA
-  Get_WindowsUsername()
-
-'   Loops through folders to find paths matching C:\Users\...\AppData
-'   then extracts the User from correct path. Superior to reading
-'   .FullName of workbook which does not work for OneDrive.
-
-```
-``` VBA
-  Get_MacUsername()
-
-'   Reads ActiveWorkbook.FullName property to get Mac user.
 
 ```
 ``` VBA
@@ -234,7 +228,8 @@ Public GlobalTempMenuSections() As Variant
 ``` VBA
   MyOS()
 
-'   "Windows",  "Mac", or "Neither Windows or Mac".
+'   Read the system environment OS variable and returns "Windows",
+'   "Mac", or the unaltered Environ("OS") output if neither.
 
 ```
 ``` VBA
@@ -269,7 +264,7 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
 ```
 ``` VBA
-  ExtractFirstInt_RightToLeft (aVariable)
+ ExtractFirstInt_RightToLeft (aVariable)
 
 '   Returns the first integer found in a string when searcing
 '   from the right end of the string to the left.
@@ -278,7 +273,7 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
 ```
 ``` VBA
-  ExtractFirstInt_LeftToRight (aVariable)
+ ExtractFirstInt_LeftToRight (aVariable)
 
 '   Returns the first integer found in a string when searcing
 '   from the left end of the string to the right.
@@ -287,7 +282,7 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
 ```
 ``` VBA
-  Truncate_Before_Int (aString)
+ Truncate_Before_Int (YourString)
 
 '   Removes characters before first integer in a sequence of characters.
 
@@ -295,7 +290,7 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
 ```
 ``` VBA
-  Truncate_After_Int (aString)
+ Truncate_After_Int (YourString)
 
 '   Removes characters after first integer in a sequence of characters.
 
@@ -303,7 +298,7 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
 ```
 ``` VBA
-  IsInt_NoTrailingSymbols (aNumeric)
+ IsInt_NoTrailingSymbols (aNumeric)
 
 '   Checks if supplied value is both numeric, and contains no numeric
 '   symbols (different from IsNumeric).
@@ -346,6 +341,10 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 '    is a plain string which is automatically combined with the local
 '    download folder to create the full path to save to.
 
+'    {SaveAsType} can be "xlsx", "xlsm", "xlsb", or "csv". A bracketed
+'    (n) will automatically be added to the file name if it is
+'    already taken.
+
 ```
 ``` VBA
  SaveToDownloads_Multiple( _
@@ -380,74 +379,181 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
 ```
 ``` VBA
- InsertSlicer( _
-     NamedRange As String, _
-     NumCols As Integer, _
-     aHeight As Double, _
-     aWidth As Double _
- )
-'   Creates a slicer for the active sheet named range {NamedRange}
-'   with {NumCols} buttons per slicer row, and with dimensions
-'   {aHeight} by {aWidth}
-
-```
-``` VBA
- AlterSlicerColumns(SlicerName As String, NumCols)
-
-'   Loops through workbook to find {SlicerName} and sets the number
-'   of buttons per row to {NumCols}
-
-```
-``` VBA
- MoveSlicer( _
-     SlicerSelection, _
-     rngPaste As Range, _
-     leftOffset, _
-     IncTop _
- )
-'   Takes Selection as {SlicerSelection}, cuts & pastes it to a rough
-'   location {rngPaste} to be incrementally adjusted from paste
-'   location by {leftOffset} and {IncTop}
-
-```
-``` VBA
-  ToggleDisplayMode()
+ ToggleDisplayMode()
 
 '   Toggles display of ribbon, formula bar, status bar & headings
 
 ```
+``` VBA*
+ CreateSlicer( _
+     tblKeyAddress As String, _
+     tblColumnName As String, _
+     HorizAlignAddress As String, _
+     HorizAlignRight As Boolean, _
+     Optional Wb As Workbook, _
+     Optional Ws As Worksheet, _
+     Optional BtnsPerRow As Long = 3, _
+     Optional BtnsPerCol As Long = 2, _
+     Optional BtnsPointWidth As Long = 80 _
+ )
+```
+``` VBA*
+ HorizAlignShape( _
+     ShapeObject As Object, _
+     AlignToRange As Range, _
+     RightAlign As Boolean _
+ )
+```
+``` VBA*
+ Get_AvenirSlicerStyle()
+```
+``` VBA*
+ TableStyleExists(StyleNamed As String)
+```
+``` VBA*
+ Create_Comment( _
+     rngComment As Range, _
+     arrTextLines As Variant, _
+     Optional WidthFactor As Single = 1, _
+     Optional HeightFactor As Single = 1, _
+     Optional FontSize As Single = 9, _
+     Optional FontColor As Long = 0, _
+     Optional BoldChoice As Boolean = False, _
+     Optional UseFormatStrings As Boolean = False, _
+     Optional VisibleProperty As Boolean = True, _
+     Optional BorderColor As Long = 6299648, _
+     Optional BorderWeight As Single = 1.3, _
+     Optional FillColor As Long = 16777215, _
+     Optional FillPicturePath As String, _
+     Optional OverrideExisting As Boolean = True _
+ )
+```
+``` VBA*
+ Get_AspectRatio(ImgPath As String)
+```
 ``` VBA
-  Print_Pad()
+ PrintEnvironVariables()
 
-'   Uses Debug.Print to print a timestamped seperator of "======"
+'   Print the environment variables to the Immediate window.
 
 ```
 ``` VBA
-  Print_Named(Something, Optional Label)
+ Print_Named(Something, Optional Label)
 
 '   Uses Debug.Print to add a space between each {Something} printed,
 '   labels each {Something} if {Label} supplied.
 
 ```
-
-##  User Interface Additions
-
 ``` VBA
+ Print_Pad()
+
+'   Uses Debug.Print to print a timestamped seperator of "======"
+
+```
+
+## Data Transformation
+
+``` VBA*
+ Filter_By( _
+     rngColumn As Range, _
+     AdvFilterTerm As String, _
+     Optional rngTable As Range _
+ )
+```
+``` VBA*
+ Order_by( _
+     rngColumn As Range, _
+     Optional Descending As Boolean = True _
+ )
+```
+``` VBA*
+ Pivot_Wider( _
+     rngTable As Range, _
+     NamesFrom As String, _
+     ValuesFrom As String, _
+     JoinFrom As String, _
+     Optional HidePivotedCols As Boolean = True, _
+     Optional DeletePivotedCols As Boolean = False, _
+     Optional PerfectMatchOnly As Boolean = True _
+ )
+```
+``` VBA*
+ ColumnSub( _
+     rngColumn As Range, _
+     strSubstitute As String, _
+     strReplacement As String _
+ )
+```
+``` VBA*
+ Drop_Columns( _
+     rngTable As Range, _
+     strMatch As String, _
+     Optional PerfectMatch As Boolean = False _
+ )
+```
+``` VBA*
+ Set_MinColWidth( _
+     rngTable As Range, _
+     MinWidth As Single, _
+     Optional OverrideAll As Boolean = False _
+ )
+```
+``` VBA*
+ Split_ColumnValues( _
+     rngColumn As Range, _
+     SplitTerm As String, _
+     SplitKeepIndex As Long _
+ )
+```
+``` VBA*
+ Reorder_Columns( _
+     Named As Variant, _
+     FromTable As Range, _
+     Optional PerfectMatch As Boolean = False, _
+     Optional ToLocation As String = "{Start} or {End}" _
+ )
+```
+``` VBA*
+ Filter_Dupes( _
+     FromColsNamed As Variant, _
+     rngTable As Range _
+ )
+```
+``` VBA*
+ Fast_Copy( _
+     rngToCopy As Range, _
+     Optional rngOutput As Range, _
+     Optional optUnique As Boolean = False _
+ )
+```
+``` VBA*
+ Overwrite_Table( _
+     tblCurrent As Range, _
+     tblNew As Range _
+ ) 'Note: Column dimensions must be the same (Excel table compatability)
+----------------------------------------------------------------``
+
+##  User Interface
+
+``` VBA*
  ConvertStrCommand( _
      CommandString As String, _
      Optional Verbose As Boolean = True _
  )
 ```
-``` VBA
+``` VBA*
  ChangeMenuVisibility( _
      MenuItems_Array As Variant, _
      VisibleProperty As Boolean _
  )
 ```
-``` VBA
- ResetCellMenu
+``` VBA*
+ ResetCellMenu()
 ```
-``` VBA
+``` VBA*
+ IdentifyMenus(Optional RemoveIndicators As Boolean = False)
+```
+``` VBA*
  CreateMenuCommand( _
     MenuCommandName As String, _
     StrCommand As String, _
@@ -455,9 +561,10 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
     Optional MenuFaceID As Long _
  )
 PARAMETERS:
-'    {PARAMETERS} =
-'    {PARAMETERS} =
-'    {PARAMETERS} =
+'    {MenuCommandName} =
+'    {StrCommand} =
+'    {Temporary} =
+'    {MenuFaceID} =
 
 EXPLANATION:
 '    ooooooooooooooooooooooooooooooooooooooooo
@@ -469,7 +576,7 @@ EXPLANATION:
 EXAMPLES: '(Ctrl+f to view & run)
      Sub Try_CreateMenuCommand()
 ```
-``` VBA
+``` VBA*
  CreateMenuSection( _
     MenuSectionName As String, _
     Array_SectionMenuNames As Variant, _
@@ -477,9 +584,10 @@ EXAMPLES: '(Ctrl+f to view & run)
     Optional Temporary As Boolean = True _
  )
 PARAMETERS:
-'    {PARAMETERS} =
-'    {PARAMETERS} =
-'    {PARAMETERS} =
+'    {MenuSectionName} =
+'    {Array_SectionMenuNames} =
+'    {Array_StrCommands} =
+'    {Temporary} =
 
 EXPLANATION:
 '    ooooooooooooooooooooooooooooooooooooooooo
@@ -491,7 +599,7 @@ EXPLANATION:
 EXAMPLES: '(Ctrl+f to view & run)
      Sub Try_CreateMenuSection()
 ```
-``` VBA
+``` VBA*
 NOTE: Popup menus are Windows only
 
  CreatePopupMenu( _
@@ -502,9 +610,11 @@ NOTE: Popup menus are Windows only
     Optional Temporary As Boolean = True _
  )
 PARAMETERS:
-'    {PARAMETERS} =
-'    {PARAMETERS} =
-'    {PARAMETERS} =
+'    {PopupMenuName} =
+'    {Array_ItemNames} =
+'    {Array_StrCommands} =
+'    {Array_ItemFaceIDs} =
+'    {Temporary} =
 
 EXPLANATION:
 '    ooooooooooooooooooooooooooooooooooooooooo
@@ -566,9 +676,15 @@ EXAMPLES: '(Ctrl+f to view & run)
     Optional Hei As Long = 20 _
  )
 PARAMETERS:
-'    {PARAMETERS} =
-'    {PARAMETERS} =
-'    {PARAMETERS} =
+'    {StrCommand} =
+'    {btnLabel} =
+'    {btnName} =
+'    {ShapeType} =
+'    {btnColor} =
+'    {Lef} =
+'    {Top} =
+'    {Wid} =
+'    {Hei} =
 
 EXPLANATION:
 '    ooooooooooooooooooooooooooooooooooooooooo
@@ -577,77 +693,4 @@ EXPLANATION:
 
 EXAMPLES: '(Ctrl+f to view & run)
      Sub Try_CreateButtonShape()
-```
-
-##  RScript
-
-
-### TODO: Remove notification of deletion
-
-    All RScript functions are currently Windows OS only.
-
-``` VBA
-  QuickRun_RScript(ByVal ScriptContents As String)
-
-'   Writes a temporary .R script containing {ScriptContents}, runs
-'   it, prompts for the deletion of the temporary script
-
-```
-``` VBA
-  WriteTemp_RScript(ByVal ScriptContents As String)
-
-'   Creates a random named temporary folder on desktop, creates an
-'   .R file "Temp.R" containing {ScriptContents}, returns Temp.R path
-
-```
-``` VBA
-  FindAndRun_RScript(ByVal ScriptLocation)
-
-'   Takes a string or cell reference {RScriptPath} & runs it on the
-'   latest version of R on the OS
-
-```
-``` VBA
- Run_RScript( _
-     RLocation As String, _
-     ScriptLocation As String, _
-     Optional Visibility As String, _
-     Optional OnErrorEnd As Boolean = True _
- )
-'   Uses the RScript.exe pointed to by {RLocation} to run the script
-'   found at {ScriptLocation}. Rscript.exe window displayed by default,
-'   but {Visibility}:= "VeryHidden" or "Minimized" can be used.
-
-```
-``` VBA
-  Get_RExePath() As String
-
-'   Returns the path to the latest version of Rscript.exe
-
-```
-``` VBA
-  Get_LatestRVersion(ByVal RVersions As Variant)
-
-'   Returns the latest version of R currently installed
-
-```
-``` VBA
-  Get_RVersions(ByVal RFolderPath As String)
-
-'   Returns an array of the R versions currently installed
-
-```
-``` VBA
-  Get_RFolder() As String
-
-'   Returns the parent R folder path which houses the installed
-'   versions of R on the OS from which the sub is called
-
-```
-``` VBA
-  Test_QuickRun_RScript()
-
-'   Writes a computationally intensive script to Desktop and asks
-'   if you want to run it (to visually verify all zRun_R f(x) worked)
-
 ```
