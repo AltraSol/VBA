@@ -1,35 +1,37 @@
 Attribute VB_Name = "QuickStartVBA"
 Option Explicit
-'
-'TODO: finish documenting (ctrl+f ooooooooooooooooooooooooooooooooooooooooo)
-'
 '===============================================================================================================================================================================================================================================================
-'#  QuickStartVBA ¬¨ github.com/ulchc (10-29-22)
+'#  QuickStartVBA ¨ github.com/ulchc (10-29-22)
 '===============================================================================================================================================================================================================================================================
 '===============================================================================================================================================================================================================================================================
 '## Overview
 '===============================================================================================================================================================================================================================================================
 '
-'A reasonably well documented collection of generic functions and subs for
-'each action I had to implement in VBA more than once.
+'A collection of generic functions and subs for every action I had to implement in VBA more than once.
 '
-'Prefix ∆í‚Äî denotes a function which has a notable load time or file interactions
-'outside ThisWorkbook. Since the intent of the QuickStartVBA module is to quickly
-'port in many *potentially* useful snippets of code to use in a more specific secondary
-'module, no functions are by default Private Functions, and this prefix is used instead.
+'Prefix Éó denotes a function which has a notable load time or file interactions
+'outside ThisWorkbook. Since my intended use of the QuickStartVBA module/repo was to quickly
+'port in many potentially useful snippets of code, then build onto a secondary module for
+'a specific use case, I've opted to use this non-common chracter prefix instead of using
+'Private Functions so that functions are available in any module.
+'
+'#### Sections
+'  * [Functions](#functions)
+'  * [Subs](#subs)
+'  * [Data Transformation](#data-transformation)
+'  * [User Interface](#user-interface)
 '
 '===============================================================================================================================================================================================================================================================
 '##  Important
 '===============================================================================================================================================================================================================================================================
 '
-'#### If you intend to use the User Interface section, the following sub
-'must be placed within ThisWorkbook:
+'If you intend to use the User Interface section, the following sub must be placed within ThisWorkbook:
 '
 '----------------------------------------------------------------``` VBA
-'   Private Sub Workbook_BeforeClose(Cancel As Boolean)
-'       Call Remove_TempMenuCommands
-'       Call Remove_TempMenuCommandSections
-'   End Sub
+'Private Sub Workbook_BeforeClose(Cancel As Boolean)
+'   Call Remove_TempMenuCommands
+'   Call Remove_TempMenuCommandSections
+'End Sub
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
 Public GlobalTempMenuCommands() As Variant
@@ -132,7 +134,7 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-' ∆í‚ÄîClipboard_Read( _
+' ÉóClipboard_Read( _
 '     Optional IfRngConcatAllVals As Boolean = True, _
 '     Optional Sep As String = ", " _
 ' )
@@ -141,7 +143,7 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-'  ∆í‚ÄîGet_CopiedRangeVals()
+'  ÉóGet_CopiedRangeVals()
 '
 ''   If range copied, checks each Cell.Value in the range and
 ''   returns an array of each non-blank value.
@@ -214,7 +216,7 @@ Public GlobalTempMenuSections() As Variant
 '
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
-' ∆í‚ÄîDelete_FileAndFolder(ByVal aFilePath As String) as Boolean
+' ÉóDelete_FileAndFolder(ByVal aFilePath As String) as Boolean
 '
 ''   Use with caution. Deletes the file supplied {aFilePath}, all
 ''   files in the same folder, and the directory itself.
@@ -247,7 +249,7 @@ Public GlobalTempMenuSections() As Variant
 '     Optional TrimWS As Boolean _
 ' )
 '
-''   Replaces `!@#$%^&‚Äú‚Äù*(")-=+{}\/?:;'.,<> from {YourString} with
+''   Replaces `!@#$%^&ìî*(")-=+{}\/?:;'.,<> from {YourString} with
 ''   {Replacement}.
 '
 '----------------------------------------------------------------```
@@ -389,10 +391,10 @@ Public GlobalTempMenuSections() As Variant
 ''   Toggles display of ribbon, formula bar, status bar & headings
 '
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' CreateSlicer( _
 '     tblKeyAddress As String, _
-'     tblColumnName As String, _
+'     ColumnName As String, _
 '     HorizAlignAddress As String, _
 '     HorizAlignRight As Boolean, _
 '     Optional Wb As Workbook, _
@@ -401,21 +403,41 @@ Public GlobalTempMenuSections() As Variant
 '     Optional BtnsPerCol As Long = 2, _
 '     Optional BtnsPointWidth As Long = 80 _
 ' )
+'
+''   Uses {tblKeyAddress} to determine the ListObject name,
+''   creates a slicer for {ColumnName}, and then aligns it with the
+''   cell specified by {HorizAlignAddress}.
+'
+''   Aligns the slicer with the top right corner of the cell when
+''   {HorizAlignRight} = True and the top left corner when
+''   {HorizAlignRight} = False.
+'
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' HorizAlignShape( _
 '     ShapeObject As Object, _
 '     AlignToRange As Range, _
 '     RightAlign As Boolean _
 ' )
+'
+''   Written for use in CreateSlicer(), but can be used to
+''   skip the calculations involved to right align any shape.
+'
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' Get_AvenirSlicerStyle()
+'
+''   Creates the .TableStyle "AvenirSlicerStyle" for CreateSlicer().
+'
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' TableStyleExists(StyleNamed As String)
+'
+''   Returns True or False depending on if .TableStyle({StyleNamed})
+''   exists.
+'
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' Create_Comment( _
 '     rngComment As Range, _
 '     arrTextLines As Variant, _
@@ -432,9 +454,33 @@ Public GlobalTempMenuSections() As Variant
 '     Optional FillPicturePath As String, _
 '     Optional OverrideExisting As Boolean = True _
 ' )
+'
+''   Adds a comment to {rngComment} that has a cleaner look than
+''   the base Excel comment, with each item of {arrTextLines} written
+''   to the comment as a line of text seperated by a new line character,
+''   and optional arguments to make changing the comment's properties
+''   less convoluted.
+'
+''   More notably, automatically adjusts the dimensions of image
+''   comments to match the aspect ratio of the image, and enables the
+''   use of format strings to bolden specific sections of text in
+''   {arrTextLines}.
+'
+''   If {arrTextLines} = Array("#Header#", "Point 1", "Point 2")
+'
+''   The comment would show as:
+'
+''   Header (bold)
+''   Point 1
+''   Point 2
+'
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' Get_AspectRatio(ImgPath As String)
+'
+''   Written for use in Create_Comment(), but will return the aspect
+''   ratio (width / height) for any image.
+'
 '----------------------------------------------------------------```
 '----------------------------------------------------------------``` VBA
 ' PrintEnvironVariables()
@@ -458,107 +504,220 @@ Public GlobalTempMenuSections() As Variant
 '===============================================================================================================================================================================================================================================================
 '## Data Transformation
 '===============================================================================================================================================================================================================================================================
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' Filter_By( _
 '     rngColumn As Range, _
 '     AdvFilterTerm As String, _
 '     Optional rngTable As Range _
 ' )
+'
+''   Removes filtered terms from either a range or ListObject by
+''   copying the .CurrentRegion of {rngColumn} (unless {rngTable}
+''   is specified), using .AdvancedFilter on the copy with the
+''   {AdvFilterTerm} applied to {rngColumn}, then overwriting the
+''   previous range or ListObject with the filtered result.
+'
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' Order_by( _
 '     rngColumn As Range, _
 '     Optional Descending As Boolean = True _
 ' )
+'
+''   Self-explanatory simplification of .Sort on a table.
+'
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' Pivot_Wider( _
 '     rngTable As Range, _
 '     NamesFrom As String, _
 '     ValuesFrom As String, _
 '     JoinFrom As String, _
-'     Optional HidePivotedCols As Boolean = True, _
-'     Optional DeletePivotedCols As Boolean = False, _
 '     Optional PerfectMatchOnly As Boolean = True _
 ' )
+'
+''   Adds new columns to {rngTable} by seperating each category in
+''   column {NamesFrom} into it's own column, with column values
+''   obtained from the column named {ValuesFrom}.
+'
+''   If a column name should be approximately matched, {PerfectMatchOnly}
+''   can be set equal to False.
+'
+''   After pivoting categories into columns, if it is found that there
+''   are mutiple rows for a single value of the column named {JoinFrom},
+''   the category values are consolidated into a single row and the
+''   duplicate rows are removed.
+'
+''   Works similarily to dplyr pivot_wider() in R, with the original
+''   columns removed after the pivot.
+'
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' ColumnSub( _
 '     rngColumn As Range, _
 '     strSubstitute As String, _
 '     strReplacement As String _
 ' )
+'
+''   Subsitutes each occurance of {strSubstitute} with {strReplacement}
+''   for all values in {rngColumn}.
+'
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' Drop_Columns( _
 '     rngTable As Range, _
 '     strMatch As String, _
 '     Optional PerfectMatch As Boolean = False _
 ' )
+'
+''   Deletes any column with a header matching {strMatch} in {rngTable},
+''   with optional parameter {PerfectMatch} to adjust match precision.
+'
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' Set_MinColWidth( _
 '     rngTable As Range, _
 '     MinWidth As Single, _
 '     Optional OverrideAll As Boolean = False _
 ' )
+'
+''   Adjusts columns widths of {rngTable} to at minimum be {MinWidth}
+''   wide, with optional parameter {OverrideAll} to reset all widths
+''   to {MinWidth}.
+'
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' Split_ColumnValues( _
 '     rngColumn As Range, _
 '     SplitTerm As String, _
 '     SplitKeepIndex As Long _
 ' )
+'
+''   Splits the values in {rngColumn} by {SplitTerm} and substitutes
+''   column values with the split index specified: {SplitKeepIndex}.
+'
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' Reorder_Columns( _
 '     Named As Variant, _
 '     FromTable As Range, _
 '     Optional PerfectMatch As Boolean = False, _
 '     Optional ToLocation As String = "{Start} or {End}" _
 ' )
+'
+''   Rearranges a subset of columns specified in the array {Named}
+''   by the order they were supplied, either to the "Start" or "End"
+''   of the .CurrentRegion of the table, with optional parameter
+''   {PerfectMatch} to adjust match precision of column names.
+'
+''   Note: {ToLocation} is not Optional. The default value is simply
+''   a means to make the choice values visible when calling the sub.
+'
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' Filter_Dupes( _
 '     FromColsNamed As Variant, _
 '     rngTable As Range _
 ' )
+'
+''   Creates a non-ListObject copy of {rngTable}, filter duplicates
+''   across all the columns specified in {FromColsNamed}, then
+''   overwrites the original table with the filtered result.
+'
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
-' Fast_Copy( _
-'     rngToCopy As Range, _
-'     Optional rngOutput As Range, _
-'     Optional optUnique As Boolean = False _
-' )
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' Overwrite_Table( _
 '     tblCurrent As Range, _
 '     tblNew As Range _
-' ) 'Note: Column dimensions must be the same (Excel table compatability)
-'----------------------------------------------------------------``
+' )
+
+''   Overwrites {tblCurrent} with {tblNew} and resizes the ListObject
+''   that linked with {tblCurrent} if applicable.
+'
+''   Note: Column dimensions must be the same (Excel table compatability)
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+' Fast_Copy( _
+'     rngToCopy As Range, _
+'     Optional rngOutput As Range _
+' )
+'
+''   Returns {rngOutput} after using .AdvancedFilter to copy
+''   {rngToCopy} to the right of itself. If [rngOutput} is specified,
+''   the default output location will be overridden.
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+' Get_FirstRow(rngFrom As Range)
+'
+''   Returns the first row of a given range.
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+' Get_LastRow(rngFrom As Range)
+'
+''   Returns the last row of a given range.
+'
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+' Get_LastColumn(rngFrom As Range)
+'
+''   Returns the last column of a given range.
+'
+'----------------------------------------------------------------```
 '===============================================================================================================================================================================================================================================================
 '##  User Interface
 '===============================================================================================================================================================================================================================================================
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' ConvertStrCommand( _
 '     CommandString As String, _
 '     Optional Verbose As Boolean = True _
 ' )
+'
+''   Automatically applied to all {StrCommand}'s passed to the menu
+''   and button creation functions below (prior to linking the
+''   macro to the object).
+'
+''   Changes existing apostrophes in {StrCommand} to quotation marks,
+''   encases the full command in apostrophes, and substitutes curly
+''   braces for brackets.
+'
+''   This is to make it easier to supply parameters to a sub or function
+''   called by a menu or shape without having to include a long list of values
+''   seperated with Chr(34) & "..." & Chr(34).
+'
+''   Original:   "MySub(Range{'NamedRange'}, 2)"
+''   Converted: "'MySub(Range("NamedRange"), 2)'"
+'
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' ChangeMenuVisibility( _
 '     MenuItems_Array As Variant, _
 '     VisibleProperty As Boolean _
 ' )
+'
+''   Toggles the visibility of items on the menu shown by right
+''   clicking a cell. For situations where the menu is becoming
+''   overcrowded with custom commands.
+'
+''   Menu items can be refered to with the same string as their
+''   display names *except* in the case of an underlined letter,
+''   in which case, the true name includes an &. For example,
+''   "Copy" is actually "&Copy".
+'
+''   All visibility modifications can be returned to default by
+''   calling ResetCellMenu()
+'
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' ResetCellMenu()
+'
+''   Restores CommandBars("Cell") and ShortcutMenus(xlWorksheetCell)
+''   to their default states.
+'
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
-' IdentifyMenus(Optional RemoveIndicators As Boolean = False)
-'----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' CreateMenuCommand( _
 '    MenuCommandName As String, _
 '    StrCommand As String, _
@@ -566,22 +725,22 @@ Public GlobalTempMenuSections() As Variant
 '    Optional MenuFaceID As Long _
 ' )
 'PARAMETERS:
-''    {MenuCommandName} =
-''    {StrCommand} =
-''    {Temporary} =
-''    {MenuFaceID} =
+''    {MenuCommandName} = The name of the menu that will be created.
+''    {StrCommand} = Command to run when clicked (see ConvertStrCommand).
+''    {Temporary} = Whether the menu should be deleted on the WorkbookClose event.
+''    {MenuFaceID} = The FaceId integer for the menu command.
 '
 'EXPLANATION:
-''    ooooooooooooooooooooooooooooooooooooooooo
-'
-''    ooooooooooooooooooooooooooooooooooooooooo
+''    Adds an item to the top of the menu displayed when right clicking
+''    a cell on a worksheet. Shows up with the caption {MenuCommandName}
+''    and the icon specified with {MenuFaceID}.
 '
 ''    Call RemoveMenuCommand(...) to remove
 '
 'EXAMPLES: '(Ctrl+f to view & run)
 '     Sub Try_CreateMenuCommand
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 ' CreateMenuSection( _
 '    MenuSectionName As String, _
 '    Array_SectionMenuNames As Variant, _
@@ -589,22 +748,26 @@ Public GlobalTempMenuSections() As Variant
 '    Optional Temporary As Boolean = True _
 ' )
 'PARAMETERS:
-''    {MenuSectionName} =
-''    {Array_SectionMenuNames} =
-''    {Array_StrCommands} =
-''    {Temporary} =
+''    {MenuSectionName} = The name of the menu section that will be created.
+''    {Array_SectionMenuNames} = Array of display names for each command.
+''    {Array_StrCommands} = Array of commands for each menu item (see ConvertStrCommand).
+''    {Temporary} = Whether the menu should be deleted on the WorkbookClose event.
 '
 'EXPLANATION:
-''    ooooooooooooooooooooooooooooooooooooooooo
+''    Adds a section to the top of the menu displayed when right clicking
+''    a cell on a worksheet. Shows up with the caption {MenuSectionName}
+''    and no icon.
 '
-''    ooooooooooooooooooooooooooooooooooooooooo
+''    When hovering over the menu section, a list of commands
+''    specified by {Array_SectionMenuNames} will display, each running
+''    it's corresponding macro specified in {Array_StrCommands}.
 '
 ''    Call RemoveMenuSection(...) to remove
 '
 'EXAMPLES: '(Ctrl+f to view & run)
 '     Sub Try_CreateMenuSection
 '----------------------------------------------------------------```
-'----------------------------------------------------------------``` VBA*
+'----------------------------------------------------------------``` VBA
 'NOTE: Popup menus are Windows only
 '
 ' CreatePopupMenu( _
@@ -615,16 +778,20 @@ Public GlobalTempMenuSections() As Variant
 '    Optional Temporary As Boolean = True _
 ' )
 'PARAMETERS:
-''    {PopupMenuName} =
-''    {Array_ItemNames} =
-''    {Array_StrCommands} =
-''    {Array_ItemFaceIDs} =
-''    {Temporary} =
+''    {PopupMenuName} = The name of the menu that will be created.
+''    {Array_ItemNames} = Array of display names for each command.
+''    {Array_StrCommands} = Array of commands for each menu item (see ConvertStrCommand).
+''    {Array_ItemFaceIDs} = Array of FaceId integers for each menu item.
+''    {Temporary} = Whether the menu should be deleted on the WorkbookClose event.
 '
 'EXPLANATION:
-''    ooooooooooooooooooooooooooooooooooooooooo
+''    Creates a custom menu named {PopupMenuName} which can be displayed with
+''    Application.CommandBars({PopupMenuName}).ShowPopup.
 '
-''    ooooooooooooooooooooooooooooooooooooooooo
+''    Each item from {Array_ItemNames} is included in the menu with
+''    it's corresponding integer FaceId specified by {Array_ItemFaceIDs}.
+''    When an item is clicked, it runs it's respective macro as
+''    assigned by {Array_StrCommands}.
 '
 ''    Call RemovePopupMenu(...) to remove
 '
@@ -641,7 +808,6 @@ Public GlobalTempMenuSections() As Variant
 '    Optional MenuFaceIDs_Array As Variant, _
 '    Optional Temporary As Boolean = True _
 ' )
-'
 'PARAMETERS:
 ''    {ButtonSectionName} = Name of the row added to the Add-ins ribbon (visible on hover).
 ''    {ButtonNames_Array} = Array of names for each command (visible on hover).
@@ -681,23 +847,34 @@ Public GlobalTempMenuSections() As Variant
 '    Optional Hei As Long = 20 _
 ' )
 'PARAMETERS:
-''    {StrCommand} =
-''    {btnLabel} =
-''    {btnName} =
-''    {ShapeType} =
-''    {btnColor} =
-''    {Lef} =
-''    {Top} =
-''    {Wid} =
-''    {Hei} =
+''    {StrCommand} = Commands to run when clicked (see ConvertStrCommand).
+''    {btnLabel} = The display name of the shape.
+''    {btnName} = The .Name property of the shape.
+''    {ShapeType} = The look of the shape as specified by the integer type.
+''    {btnColor} = Color code of the shape
+''    {Lef} = .Left property of the shape
+''    {Top} = .Top property of the shape
+''    {Wid} = .Width property of the shape
+''    {Hei} = .Hweight property of the shape
 '
 'EXPLANATION:
-''    ooooooooooooooooooooooooooooooooooooooooo
-'
-''    ooooooooooooooooooooooooooooooooooooooooo
+''    Inserts a shape onto the sheet that has the appears of a button
+''    and runs {StrCommand} when clicked.
 '
 'EXAMPLES: '(Ctrl+f to view & run)
 '     Sub Try_CreateButtonShape
+'----------------------------------------------------------------```
+'----------------------------------------------------------------``` VBA
+' IdentifyMenus(Optional RemoveIndicators As Boolean = False)
+'
+''   Loops through each CommandBar in the workbook and adds a
+''   new indicator command *This is CommandBar(i)* to the top
+''   of the menu so that the index of the menu can be identified.
+'
+''   This is simply to enable the modification of CommandBars other
+''   than the worksheet cell menus (ex. ListObject), which aren't
+''   often named in an intuitive way.
+'
 '----------------------------------------------------------------```
 
 '===============================================================================================================================================================================================================================================================
@@ -743,7 +920,7 @@ With Regex
     .Global = ReplaceAll
     .MultiLine = True
     .IgnoreCase = False
-    .Pattern = "[" & "`!@#$%^&‚Äú‚Äù*(" & Chr(34) & ")-=+{}\/?:;'.,<>" & "]"
+    .Pattern = "[" & "`!@#$%^&ìî*(" & Chr(34) & ")-=+{}\/?:;'.,<>" & "]"
 End With
 
     YourString = Regex.Replace(YourString, Replacement)
@@ -1224,7 +1401,7 @@ On Error GoTo -1
 
 End Function
 
-Function ∆í‚ÄîClipboard_Read( _
+Function ÉóClipboard_Read( _
     Optional IfRngConcatAllVals As Boolean = True, _
     Optional Sep As String = ", " _
 )
@@ -1232,26 +1409,26 @@ On Error GoTo NoRead
 
 If Clipboard_IsRange() = True Then
     Dim CopiedRangeText As Variant
-        CopiedRangeText = ∆í‚ÄîGet_CopiedRangeVals()
+        CopiedRangeText = ÉóGet_CopiedRangeVals()
         
         If IfRngConcatAllVals = False Then
-            ∆í‚ÄîClipboard_Read = CopiedRangeText(LBound(CopiedRangeText))
+            ÉóClipboard_Read = CopiedRangeText(LBound(CopiedRangeText))
         Else
-            ∆í‚ÄîClipboard_Read = Application.WorksheetFunction.TextJoin(Sep, True, CopiedRangeText)
+            ÉóClipboard_Read = Application.WorksheetFunction.TextJoin(Sep, True, CopiedRangeText)
         End If
         
 Else
-    ∆í‚ÄîClipboard_Read = CreateObject("HTMLFile").ParentWindow.ClipboardData.GetData("text")
+    ÉóClipboard_Read = CreateObject("HTMLFile").ParentWindow.ClipboardData.GetData("text")
 End If
 
 Exit Function
 
 NoRead:
-∆í‚ÄîClipboard_Read = False
+ÉóClipboard_Read = False
 On Error GoTo -1
 End Function
 
-Function ∆í‚ÄîGet_CopiedRangeVals()
+Function ÉóGet_CopiedRangeVals()
 
 If Application.ScreenUpdating = True Then Application.ScreenUpdating = False
 If Application.DisplayAlerts = True Then Application.DisplayAlerts = False
@@ -1276,7 +1453,7 @@ Dim aCell As Range, _
             'To reverse final ReDim after the last aCell added
             ReDim Preserve arrCellText(UBound(arrCellText()) - 1)
                 
-                ∆í‚ÄîGet_CopiedRangeVals = arrCellText()
+                ÉóGet_CopiedRangeVals = arrCellText()
 PasteIssue:
                 ActiveSheet.Delete
                        
@@ -1532,7 +1709,7 @@ NotInt:
 IsInt_NoTrailingSymbols = False
 End Function
 
-Function ∆í‚ÄîDelete_FileAndFolder(ByVal aFilePath As String) As Boolean
+Function ÉóDelete_FileAndFolder(ByVal aFilePath As String) As Boolean
 
 On Error GoTo NoDelete
 
@@ -1561,18 +1738,18 @@ If InStr(1, aFilePath, ".") = 0 Then GoTo NoDelete
 If Dir(ContainerFolder, vbDirectory) = "" Then GoTo NoDelete
 
 If Right(ContainerFolder, Len(Slash & "Desktop" & Slash)) = (Slash & "Desktop" & Slash) Then
-    Debug.Print "!!WARNING!! Path supplied to ∆í‚ÄîDelete_FileAndFolder() would delete all files in your Desktop folder"
+    Debug.Print "!!WARNING!! Path supplied to ÉóDelete_FileAndFolder() would delete all files in your Desktop folder"
     GoTo NoDelete
 End If
 
 If Right(ContainerFolder, Len(Slash & "Documents" & Slash)) = (Slash & "Documents" & Slash) Then
-    Debug.Print "!!WARNING!! Path supplied to ∆í‚ÄîDelete_FileAndFolder() would delete all files in your Documents folder"
+    Debug.Print "!!WARNING!! Path supplied to ÉóDelete_FileAndFolder() would delete all files in your Documents folder"
     GoTo NoDelete
 End If
 
 If Len(ContainerFolder) - Len(Replace(ContainerFolder, Slash, "")) <= 4 Then
     Debug.Print Len(ContainerFolder) - Len(Replace(ContainerFolder, "/", ""))
-    Debug.Print "!!WARNING!! Path supplied to ∆í‚ÄîDelete_FileAndFolder() is a high level folder that could delete many files"
+    Debug.Print "!!WARNING!! Path supplied to ÉóDelete_FileAndFolder() is a high level folder that could delete many files"
     GoTo NoDelete
 End If
     
@@ -1580,11 +1757,11 @@ End If
     RmDir ContainerFolder
     Debug.Print ContainerFolder & " and all files within it deleted."
 
-        ∆í‚ÄîDelete_FileAndFolder = True
+        ÉóDelete_FileAndFolder = True
         Exit Function
 
 NoDelete:
-∆í‚ÄîDelete_FileAndFolder = False
+ÉóDelete_FileAndFolder = False
             
 End Function
 
@@ -1867,7 +2044,7 @@ End Sub
 
 Sub CreateSlicer( _
     tblKeyAddress As String, _
-    tblColumnName As String, _
+    ColumnName As String, _
     HorizAlignAddress As String, _
     HorizAlignRight As Boolean, _
     Optional Wb As Workbook, _
@@ -1898,7 +2075,7 @@ End With
 Set NewCache _
   = Wb.SlicerCaches.Add2( _
     Source:=Wb.Sheets(Ws.Name).ListObjects(tblName), _
-    SourceField:=CStr(tblColumnName) _
+    SourceField:=CStr(ColumnName) _
 )
 
 Set SheetFX = Application.WorksheetFunction
@@ -1911,7 +2088,7 @@ AutoHeight = 29 + SheetFX.RoundUp(SheetFX.Min(NewCache.SlicerItems.Count / BtnsP
 Set NewSlicer _
   = NewCache.Slicers.Add( _
     SlicerDestination:=Wb.Sheets(Ws.Name), _
-    Caption:=CStr(tblColumnName), _
+    Caption:=CStr(ColumnName), _
     Top:=0, _
     Left:=0, _
     Width:=AutoWidth, _
@@ -2336,8 +2513,6 @@ Sub Pivot_Wider( _
     NamesFrom As String, _
     ValuesFrom As String, _
     JoinFrom As String, _
-    Optional HidePivotedCols As Boolean = True, _
-    Optional DeletePivotedCols As Boolean = False, _
     Optional PerfectMatchOnly As Boolean = True _
 )
 
@@ -2606,7 +2781,6 @@ Next i
 rngHeaders.Columns.AutoFit
 End Sub
 
-
 Sub Filter_Dupes( _
     FromColsNamed As Variant, _
     rngTable As Range _
@@ -2657,8 +2831,7 @@ End Sub
 
 Function Fast_Copy( _
     rngToCopy As Range, _
-    Optional rngOutput As Range, _
-    Optional optUnique As Boolean = False _
+    Optional rngOutput As Range _
 )
 
 If TypeName(rngOutput) = "Nothing" Then
@@ -2669,8 +2842,7 @@ End If
 
     With rngToCopy.AdvancedFilter( _
         Action:=xlFilterCopy, _
-        CopyToRange:=rngOutput, _
-        Unique:=optUnique _
+        CopyToRange:=rngOutput _
     ): End With
         
         Set Fast_Copy = rngOutput
@@ -2711,6 +2883,18 @@ Set Overwrite_Table = Fast_Copy( _
 )
 
 tblNew.Clear
+End Function
+
+Function Get_FirstRow(rngFrom As Range)
+    Set Get_FirstRow = Range(rngFrom.Cells(1), Cells(rngFrom.Cells(1).Row, rngFrom.Cells(rngFrom.Count).Column))
+End Function
+
+Function Get_LastRow(rngFrom As Range)
+    Set Get_LastRow = Range(Cells(rngFrom.Cells(rngFrom.Count).Row, rngFrom.Cells(1).Column), rngFrom.Cells(rngFrom.Count))
+End Function
+
+Function Get_LastColumn(rngFrom As Range)
+    Set Get_LastColumn = Range(Cells(rngFrom.Cells(1).Row, rngFrom.Cells(rngFrom.Count).Column), rngFrom.Cells(rngFrom.Count))
 End Function
 
 '===============================================================================================================================================================================================================================================================
@@ -3401,7 +3585,7 @@ End Function
 '### Legal Special Character Reference
 '---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-' ¬∂ ‚Ç¨ ¬ß √ò ¬µ ¬™ ¬∞ ¬π ¬≤ ¬≥ ¬∑ ‚Ä¢ ¬ø ¬° ∆í √ó ¬§ ¬ª ¬´ ‚Ä° ¬¶ ¬± √∑ ¬® ¬Ø ‚Äî ¬¨
+' ∂ Ä ß ÿ µ ™ ∞ π ≤ ≥ ∑ ï ø ° É ◊ § ª ´ á ¶ ± ˜ ® Ø ó ¨
 
 'https://homepage.cs.uri.edu/faculty/wolfe/book/Readings/R02%20Ascii/completeASCII.htm
 
