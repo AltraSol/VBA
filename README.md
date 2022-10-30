@@ -2,9 +2,7 @@
 #  QuickStartVBA ¬ github.com/ulchc (10-29-22)
 
 
-## Overview
-
-[test](https://github.com/ulchc/QuickStartVBA/blob/main/README.md#important)
+## Overview 
 
 A reasonably well documented collection of generic functions and subs for
 each action I had to implement in VBA more than once.
@@ -14,12 +12,7 @@ outside ThisWorkbook. Since the intent of the QuickStartVBA module is to quickly
 port in many *potentially* useful snippets of code to use in a more specific secondary
 module, no functions are by default Private Functions, and this prefix is used instead.
 
-
-##  Important
-
-
-#### If you intend to use the User Interface section, the following sub
-must be placed within ThisWorkbook:
+#### If you intend to use the User Interface section, the following sub must be placed within ThisWorkbook:
 
 ``` VBA
    Private Sub Workbook_BeforeClose(Cancel As Boolean)
