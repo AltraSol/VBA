@@ -706,7 +706,7 @@ NOTE: Windows only (uses CreateObject("VBScript.RegExp"))
 
 '   All visibility modifications can be returned to default by
 '   calling ResetCellMenu()
-'
+
 ```
 ``` VBA
  ResetCellMenu()
